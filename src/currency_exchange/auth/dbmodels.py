@@ -1,5 +1,3 @@
-from importlib import import_module
-
 from sqlalchemy.orm import Mapped, mapped_column
 from .services.permissionsservice import UserCategory
 
