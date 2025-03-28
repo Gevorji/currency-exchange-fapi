@@ -14,4 +14,4 @@ engine = create_async_engine(
     ), echo=general_settings.DEBUG
 )
 
-async_session_factory = async_sessionmaker(engine)
+async_session_factory = async_sessionmaker(engine, expire_on_commit=False)
