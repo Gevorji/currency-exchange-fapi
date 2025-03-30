@@ -57,10 +57,14 @@ class AsyncCrudMixin[RootModelType, InputModelType, OutputModelType]:
                     setattr(model, attr, value)
                 self.process_final_model(model)
 
-    async def _delete_object(self, identity_criteria) -> None:
+    async def _delete_object(self, identity_criteria, error_msg: str) -> None:
         async with self._session_factory() as session:
             async with session.begin():
-                await session.execute(delete(self._root_model).where(identity_criteria))
+                res = await session.execute(select(self._root_model).where(identity_criteria))
+                model = res.scalars().one_or_none()
+                if model is None:
+                    raise self._object_does_not_exist_error(error_msg)
+                session.delete(model)
 
     def process_final_model(self, model: RootModelType) -> None: ...
 
