@@ -42,18 +42,27 @@ class AsyncCrudMixin[RootModelType, InputModelType, OutputModelType]:
         model = self.create_root_model_from_dto(input_object)
         async with self._session_factory() as session:
             async with session.begin():
+                self.process_final_model(model)
                 session.add(model)
 
-    async def _update_object(self, identity_criteria, update_values: dict) -> None:
+    async def _update_object(self, identity_criteria, update_values: dict, error_msg: str) -> None:
         async with self._session_factory() as session:
             async with session.begin():
-                await session.execute(update(self._root_model).where(identity_criteria).values(update_values))
+                res = await session.execute(select(self._root_model).where(identity_criteria))
+                model = res.scalars().one_or_none()
+                if not model:
+                    raise self._object_does_not_exist_error(error_msg)
+
+                for attr, value in update_values.items():
+                    setattr(model, attr, value)
+                self.process_final_model(model)
 
     async def _delete_object(self, identity_criteria) -> None:
         async with self._session_factory() as session:
             async with session.begin():
                 await session.execute(delete(self._root_model).where(identity_criteria))
 
+    def process_final_model(self, model: RootModelType) -> None: ...
 
 
 
