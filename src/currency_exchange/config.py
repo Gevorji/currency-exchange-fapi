@@ -2,6 +2,9 @@ from typing import Annotated, Literal
 from pydantic import StrictStr, IPvAnyAddress, field_validator, PositiveInt, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+# DeclarativeBase common for all project models
+SQLAModelBase = 'currency_exchange.db.base.Base'
+
 class GeneralSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file='.env', extra='ignore')
 
