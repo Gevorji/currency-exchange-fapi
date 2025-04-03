@@ -1,12 +1,11 @@
 from typing import Callable, TypeVar
 
-import sqlalchemy
-from sqlalchemy import select, update, delete
+from sqlalchemy import select
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from pydantic import BaseModel as PydanticModel
 
-SessionMakerType: async_sessionmaker[AsyncSession]
+SessionMakerType = async_sessionmaker[AsyncSession]
 
 InputModelType = TypeVar("InputModelType", bound=PydanticModel)
 OutputModelType = TypeVar("OutputModelType", bound=PydanticModel)
@@ -44,6 +43,7 @@ class AsyncCrudMixin[RootModelType, InputModelType, OutputModelType]:
             async with session.begin():
                 self.process_final_model(model)
                 session.add(model)
+                return model
 
     async def _update_object(self, identity_criteria, update_values: dict, error_msg: str) -> None:
         async with self._session_factory() as session:
@@ -64,7 +64,7 @@ class AsyncCrudMixin[RootModelType, InputModelType, OutputModelType]:
                 model = res.scalars().one_or_none()
                 if model is None:
                     raise self._object_does_not_exist_error(error_msg)
-                session.delete(model)
+                await session.delete(model)
 
     def process_final_model(self, model: RootModelType) -> None: ...
 
