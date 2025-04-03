@@ -43,6 +43,7 @@ class AsyncCrudMixin[RootModelType, InputModelType, OutputModelType]:
             async with session.begin():
                 self.process_final_model(model)
                 session.add(model)
+                return model
 
     async def _update_object(self, identity_criteria, update_values: dict, error_msg: str) -> None:
         async with self._session_factory() as session:
