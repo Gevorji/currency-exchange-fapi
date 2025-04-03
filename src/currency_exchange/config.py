@@ -7,7 +7,7 @@ class GeneralSettings(BaseSettings):
 
     DEBUG: Literal['True', 'False', '1', '0'] = 'False'
 
-    @field_validator('DEBUG')
+    @field_validator('DEBUG', mode='after')
     @classmethod
     def validate_debug(cls, value: str):
         return {
