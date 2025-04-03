@@ -1,12 +1,11 @@
 from typing import Callable, TypeVar
 
-import sqlalchemy
-from sqlalchemy import select, update, delete
+from sqlalchemy import select
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from pydantic import BaseModel as PydanticModel
 
-SessionMakerType: async_sessionmaker[AsyncSession]
+SessionMakerType = async_sessionmaker[AsyncSession]
 
 InputModelType = TypeVar("InputModelType", bound=PydanticModel)
 OutputModelType = TypeVar("OutputModelType", bound=PydanticModel)
