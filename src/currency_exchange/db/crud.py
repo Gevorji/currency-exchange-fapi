@@ -63,7 +63,7 @@ class AsyncCrudMixin[RootModelType, InputModelType, OutputModelType]:
                 model = res.scalars().one_or_none()
                 if model is None:
                     raise self._object_does_not_exist_error(error_msg)
-                session.delete(model)
+                await session.delete(model)
 
     def process_final_model(self, model: RootModelType) -> None: ...
 
