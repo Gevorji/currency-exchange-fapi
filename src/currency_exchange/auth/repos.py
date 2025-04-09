@@ -119,7 +119,7 @@ class TokenStateRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC)
     async def get_all(self) -> list[TokenStateDbOut]:
         return await self._get_all_objects()
 
-    async def save(self, token_state: TokenStateDbIn | TokenStateDbUpdate) -> TokenStateDbOut | None: # TODO: Unique username constraint violation
+    async def save(self, token_state: TokenStateDbIn | TokenStateDbUpdate) -> TokenStateDbOut | None:
         if isinstance(token_state, TokenStateDbUpdate):
             await self.update(token_state)
             return
@@ -127,7 +127,7 @@ class TokenStateRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC)
         token_state_model = await self._handle_db_exception(self._save_object(token_state))
         return TokenStateDbOut.model_validate(token_state_model)
 
-    async def update(self, token_state: TokenStateDbUpdate) -> None: # TODO: Unique username constraint violation
+    async def update(self, token_state: TokenStateDbUpdate) -> None:
         update_values = token_state.model_dump(exclude={'id'}, exclude_defaults=True)
         if update_values:
             await self._handle_db_exception(
