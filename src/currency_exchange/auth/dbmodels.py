@@ -1,6 +1,7 @@
 import re
 from typing import Optional, Literal
 
+from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.types import UUID
@@ -34,11 +35,11 @@ class User(SQLAModelBase):
         self.category = kwargs.get("category")
         password = kwargs.get("password")
         if password:
+            self.validate_fields(['username', 'password'])
             self.set_password(password)
         else:
+            self.validate_fields(['username'])
             self.password = None
-
-        self.validate_fields(['username'])
 
     def set_password(self, password: str) -> None:
         self.validate_password(password)
@@ -52,7 +53,8 @@ class User(SQLAModelBase):
                 validator(password)
             except ValueError as e:
                 complains.append(e.args[0])
-
+        if complains:
+            raise ValueError(complains)
 
     def match_password(self, password: str) -> bool:
         if self.password is None:
@@ -93,3 +95,4 @@ class TokenState(SQLAModelBase):
     revoked: Mapped[bool] = mapped_column(default=False)
     device_id: Mapped[str] = mapped_column(default=None)
     expiry_date = mapped_column(TIMESTAMP(timezone=True))
+    user_id: Mapped[str] = mapped_column(ForeignKey('user.id'))
