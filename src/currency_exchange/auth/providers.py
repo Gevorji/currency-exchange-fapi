@@ -130,6 +130,9 @@ async def verify_access(scopes: SecurityScopes, token: Annotated[JWTModel, Depen
     if not set(scopes.scopes).issubset(token.claims.scopes):
         logger.debug('Access denied.')
         raise HTTPException(detail='Access denied', **forbidden_exc_args)
+    if token.claims.scope[0] == 'refresh':
+        logger.debug('Access denied.')
+        raise HTTPException(detail='Access denied. Attempted to access with refresh token.', **forbidden_exc_args)
 
 
 async def get_user(username: str, password: str) -> UserDbOut:
