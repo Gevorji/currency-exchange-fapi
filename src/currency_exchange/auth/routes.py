@@ -4,6 +4,7 @@ import logging
 from fastapi import APIRouter, Form, status, HTTPException
 from fastapi.params import Depends, Query
 from fastapi.responses import JSONResponse
+from fastapi.security import HTTPBasicCredentials, OAuth2PasswordRequestForm
 
 from . import get_users_repo, get_token_state_repo, errors
 from .schemas import (
@@ -14,7 +15,7 @@ from .providers import (
     JWTIssuerProvider, get_active_user_oauth, jwt_validator_provider, RevocationCheckerType,
     jwt_revocation_checker_provider, get_active_user_http_basic_auth, revoke_all_users_tokens_per_device,
     ouath2_scheme, http_basic_auth_scheme, get_user_from_sub_jwt_claim, get_user_id_from_sub_jwt_claim,
-    revoke_users_tokens
+    revoke_users_tokens, check_password
 )
 from .services.jwtservice import JWTValidator
 from .services.permissions import UserCategory
@@ -72,8 +73,10 @@ async def create_user(
 )
 async def create_token(
         user: Annotated[UserDbOut, Depends(get_active_user_oauth)],
+        ouath_form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
         device_id: Annotated[str, Form()] = 'none',
 ):
+    check_password(user, ouath_form_data.password)
     token_issuer = JWTIssuerProvider(user, device_id)
     access_token_str, _, access_token_payload = token_issuer.get_access_token()
     refresh_token_str, _, refresh_token_payload = token_issuer.get_refresh_token()
@@ -116,6 +119,7 @@ async def create_token(
 )
 async def refresh_access_token(
         user: Annotated[UserDbOut, Depends(get_active_user_http_basic_auth)],
+        user_credentials: Annotated[HTTPBasicCredentials, Depends(http_basic_auth_scheme)],
         grant_type: Annotated[Literal['refresh_token'], Form(description='Required to be an exact "refresh_token" value')],
         refresh_token: Annotated[str, Form()],
         token_validator: Annotated[JWTValidator, Depends(jwt_validator_provider)],
@@ -125,6 +129,8 @@ async def refresh_access_token(
         'status_code': status.HTTP_400_BAD_REQUEST,
         'headers': {'WWW-Authenticate': 'Bearer'}
     }
+
+    check_password(user, user_credentials.password)
 
     try:
         try:

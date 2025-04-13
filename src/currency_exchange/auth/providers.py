@@ -135,42 +135,47 @@ async def verify_access(scopes: SecurityScopes, token: Annotated[JWTModel, Depen
         raise HTTPException(detail='Access denied. Attempted to access with refresh token.', **forbidden_exc_args)
 
 
-async def get_user(username: str, password: str) -> UserDbOut:
+async def get_user(username: str) -> UserDbOut:
 
     user_repo: UsersRepository = get_users_repo()
 
-    user = await user_repo.get(username)
-
-    if not match_password(password, user.password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Incorrect username or password')
+    try:
+        user = await user_repo.get(username)
+    except errors.UserDoesNotExistError:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='User not found')
     return user
 
 
-async def get_active_user(username: str, password: str) -> UserDbOut:
-    user = await get_user(username, password)
+async def get_active_user(username: str) -> UserDbOut:
+    user = await get_user(username)
     if not user.is_active:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='User is not active')
     return user
 
 
+def check_password(user: UserDbOut, password: str) -> None:
+    if not match_password(password, user.password):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Incorrect username or password')
+
+
 async def get_user_ouath(ouath_form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> UserDbOut:
-    return await get_user(ouath_form_data.username, ouath_form_data.password)
+    return await get_user(ouath_form_data.username)
 
 
 async def get_active_user_oauth(ouath_form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> UserDbOut:
-    return await get_active_user(ouath_form_data.username, ouath_form_data.password)
+    return await get_active_user(ouath_form_data.username)
 
 
 async def get_user_http_basic_auth(
         user_credentials: Annotated[HTTPBasicCredentials, Depends(http_basic_auth_scheme)]
 ) -> UserDbOut:
-    return await get_active_user(user_credentials.username, user_credentials.password)
+    return await get_active_user(user_credentials.username)
 
 
 async def get_active_user_http_basic_auth(
         user_credentials: Annotated[HTTPBasicCredentials, Depends(http_basic_auth_scheme)]
 ) -> UserDbOut:
-    return await get_active_user(user_credentials.username, user_credentials.password)
+    return await get_active_user(user_credentials.username)
 
 
 async def get_user_from_bearer_token(bearer_token: Annotated[JWTModel, Depends(validate_jwt)]) -> UserDbOut:
