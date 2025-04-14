@@ -1,13 +1,12 @@
-from http.client import responses
-from typing import Annotated, Literal
+from typing import Literal
 from enum import IntEnum
 
 from fastapi import APIRouter, Security, status, HTTPException
 
 from . import get_users_repo, get_token_state_repo, errors
-from .providers import revoke_all_users_tokens_per_device, revoke_users_tokens
 from .schemas import UserDbOut, UserDbUpdate
 from .services.permissions import UserCategory
+from .utils import revoke_users_tokens
 
 admin_router = APIRouter(prefix='/admin', dependencies=[Security(scopes=['all'])])
 

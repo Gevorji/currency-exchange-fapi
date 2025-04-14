@@ -1,23 +1,21 @@
 from collections.abc import Awaitable
-from typing import Annotated, Callable, Optional
+from typing import Annotated, Callable
 import logging
 
-from fastapi import Depends, HTTPException, status, Form
+from fastapi import Depends, HTTPException, status
 from fastapi.security import (
     SecurityScopes, OAuth2PasswordBearer, HTTPBasic, HTTPBasicCredentials, OAuth2PasswordRequestForm
 )
 from starlette.requests import Request
 
-from jwt_sandbox import token
-from . import get_users_repo, get_token_state_repo
-from .repos import TokenStateRepository, UsersRepository
 from .routes import TOKEN_URL
-from .schemas import UserDbOut, TokenStateDbUpdate, TokenStateDbOut
+from .schemas import UserDbOut
 from .services.permissions import scopes_registry, UserCategory
 from .services.jwtservice import JWTValidator, JWTModel, JWTIssuer
 from .services.passwordhashing import match_password
 from . import errors
 from currency_exchange.config import auth_settings
+from .utils import check_jwt_revocation, get_user, get_active_user, get_user_from_sub_jwt_claim
 
 logger = logging.getLogger('auth')
 
@@ -55,25 +53,8 @@ class JWTRevocationCheckerProvider:
         self._checker = checker
 
 
-async def check_jwt_revocation(jwt: JWTModel) -> bool:
-    token_repo: TokenStateRepository = get_token_state_repo()
-    token_state = await token_repo.get(jwt.claims.jti)
-    logger.debug('Got revoked token. Owner: %s', jwt.claims.sub)
-    return token_state.is_revoked
-
-
 jwt_validator_provider = JWTValidatorProvider(JWTValidator.from_config(auth_settings))
 jwt_revocation_checker_provider = JWTRevocationCheckerProvider(check_jwt_revocation)
-
-
-async def get_user_from_sub_jwt_claim(sub: str) -> UserDbOut:
-    username = sub.rsplit('.', 1)[-2]
-    user_repo = get_users_repo()
-    return await user_repo.get(username)
-
-
-def get_user_id_from_sub_jwt_claim(sub: str) -> int:
-    return int(sub.rsplit('.', 1)[-1].lstrip('id'))
 
 
 async def validate_jwt(
@@ -135,24 +116,6 @@ async def verify_access(scopes: SecurityScopes, token: Annotated[JWTModel, Depen
         raise HTTPException(detail='Access denied. Attempted to access with refresh token.', **forbidden_exc_args)
 
 
-async def get_user(username: str) -> UserDbOut:
-
-    user_repo: UsersRepository = get_users_repo()
-
-    try:
-        user = await user_repo.get(username)
-    except errors.UserDoesNotExistError:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='User not found')
-    return user
-
-
-async def get_active_user(username: str) -> UserDbOut:
-    user = await get_user(username)
-    if not user.is_active:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='User is not active')
-    return user
-
-
 def check_password(user: UserDbOut, password: str) -> None:
     if not match_password(password, user.password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Incorrect username or password')
@@ -180,46 +143,6 @@ async def get_active_user_http_basic_auth(
 
 async def get_user_from_bearer_token(bearer_token: Annotated[JWTModel, Depends(validate_jwt)]) -> UserDbOut:
     return await get_user_from_sub_jwt_claim(bearer_token.claims.sub)
-
-
-async def revoke_tokens(tokens: list[TokenStateDbOut]):
-    token_state_repo = get_token_state_repo()
-    for token in tokens:
-        update_token = TokenStateDbUpdate.model_validate(token.model_dump())
-        update_token.revoked = True
-        await token_state_repo.update(update_token)
-
-
-async def revoke_all_users_tokens_per_device(user: UserDbOut, device_id: str) -> list[TokenStateDbOut]:
-    token_state_repo = get_token_state_repo()
-    users_tokens = await token_state_repo.get_users_tokens_per_device(user.id, device_id)
-    tokens_jtis = [token.claims.jti for token in users_tokens]
-
-    if not users_tokens:
-        logger.info('Tokens revocation: user %s has no active tokens for device %s', user.username, device_id)
-
-    await revoke_tokens(users_tokens)
-    logger.info('Revoked all user %s tokens for device %s', user.username, device_id)
-    return tokens_jtis
-
-
-async def revoke_users_tokens(user: UserDbOut, jtis: Optional[list[str]] = None) -> list[TokenStateDbOut]:
-    token_state_repo = get_token_state_repo()
-    if jtis:
-        users_tokens = await token_state_repo.get_users_tokens_by_jti(user.id, jtis)
-    else:
-        users_tokens = await token_state_repo.get_users_tokens(user.id)
-    tokens_jtis = [token.claims.jti for token in users_tokens]
-
-    if not users_tokens:
-        logger.info('Tokens revocation: user %s has no active tokens', user.username)
-
-    await revoke_tokens(users_tokens)
-    if not jtis:
-        logger.info('Revoked all user %s tokens', user.username)
-    else:
-        logger.info('Revoked %s user %s tokens', len(tokens_jtis), user.username)
-    return tokens_jtis
 
 
 class JWTIssuerProvider:

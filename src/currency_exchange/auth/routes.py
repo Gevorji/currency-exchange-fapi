@@ -8,17 +8,17 @@ from fastapi.security import HTTPBasicCredentials, OAuth2PasswordRequestForm
 
 from . import get_users_repo, get_token_state_repo, errors
 from .schemas import (
-    UserDbIn, UserDbOut, TokenStateDbIn, TokenStateDbOut,
-    UserCreationErrorResponse, UserCreatedResponse, TokenCreatedResponse, TokenStateDbUpdate, TokensRevokedResponse
+    UserDbIn, UserDbOut, TokenStateDbIn, UserCreationErrorResponse,
+    UserCreatedResponse, TokenCreatedResponse, TokensRevokedResponse
 )
 from .providers import (
     JWTIssuerProvider, get_active_user_oauth, jwt_validator_provider, RevocationCheckerType,
-    jwt_revocation_checker_provider, get_active_user_http_basic_auth, revoke_all_users_tokens_per_device,
-    ouath2_scheme, http_basic_auth_scheme, get_user_from_sub_jwt_claim, get_user_id_from_sub_jwt_claim,
-    revoke_users_tokens, check_password
+    jwt_revocation_checker_provider, get_active_user_http_basic_auth,
+    http_basic_auth_scheme, get_user_from_sub_jwt_claim, check_password
 )
 from .services.jwtservice import JWTValidator
 from .services.permissions import UserCategory
+from .utils import revoke_all_users_tokens_per_device, get_user_id_from_sub_jwt_claim, revoke_users_tokens
 
 logger = logging.getLogger('auth')
 
