@@ -13,12 +13,12 @@ from .schemas import (
 )
 from .providers import (
     JWTIssuerProvider, get_active_user_oauth, jwt_validator_provider, RevocationCheckerType,
-    jwt_revocation_checker_provider, get_active_user_http_basic_auth,
-    http_basic_auth_scheme, get_user_from_sub_jwt_claim, check_password
+    jwt_revocation_checker_provider, get_active_user_http_basic_auth, http_basic_auth_scheme
 )
 from .services.jwtservice import JWTValidator
 from .services.permissions import UserCategory
-from .utils import revoke_all_users_tokens_per_device, get_user_id_from_sub_jwt_claim, revoke_users_tokens
+from .utils import revoke_all_users_tokens_per_device, get_user_id_from_sub_jwt_claim, revoke_users_tokens, \
+    check_password
 
 logger = logging.getLogger('auth')
 

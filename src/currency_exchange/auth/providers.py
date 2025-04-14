@@ -116,11 +116,6 @@ async def verify_access(scopes: SecurityScopes, token: Annotated[JWTModel, Depen
         raise HTTPException(detail='Access denied. Attempted to access with refresh token.', **forbidden_exc_args)
 
 
-def check_password(user: UserDbOut, password: str) -> None:
-    if not match_password(password, user.password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Incorrect username or password')
-
-
 async def get_user_ouath(ouath_form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> UserDbOut:
     return await get_user(ouath_form_data.username)
 

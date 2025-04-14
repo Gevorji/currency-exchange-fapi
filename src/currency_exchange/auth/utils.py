@@ -7,7 +7,7 @@ from . import get_token_state_repo, get_users_repo, errors
 from .repos import TokenStateRepository, UsersRepository
 from .schemas import UserDbOut, TokenStateDbOut, TokenStateDbUpdate
 from .services.jwtservice import JWTModel
-
+from .services.passwordhashing import match_password
 
 logger = logging.getLogger('auth')
 
@@ -45,6 +45,11 @@ async def get_active_user(username: str) -> UserDbOut:
     if not user.is_active:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='User is not active')
     return user
+
+
+def check_password(user: UserDbOut, password: str) -> None:
+    if not match_password(password, user.password):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Incorrect username or password')
 
 
 async def revoke_tokens(tokens: list[TokenStateDbOut]):
