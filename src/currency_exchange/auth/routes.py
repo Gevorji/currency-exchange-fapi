@@ -52,6 +52,7 @@ async def create_user(
                 UserDbIn(username=username, password=password1, category=UserCategory.API_CLIENT, is_active=True)
             )
             logger.info('Successfully registered user %s', user.username)
+            return UserCreatedResponse.model_validate(user)
         except Exception as e:
             logger.info('Unsuccessful attempt to register user %s', username)
             logger.debug('Exception info of unsuccessful registration', username, exc_info=e)
