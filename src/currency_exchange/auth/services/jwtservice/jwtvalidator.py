@@ -1,3 +1,4 @@
+import binascii
 from pathlib import Path
 from typing import Optional
 
@@ -52,3 +53,5 @@ class JWTValidator(LoadKeyMixin):
             return jwt.decode(token, self._key, algorithms=[self._algorithm.value])
          except joserfc.errors.BadSignatureError as e:
              raise errors.BadSignatureError('Invalid token with bad signature') from e
+         except (binascii.Error, ValueError) as e:
+             raise errors.CorruptedTokenDataError('Token data is corrupted') from e

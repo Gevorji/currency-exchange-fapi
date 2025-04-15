@@ -83,6 +83,8 @@ async def validate_jwt(
         raise HTTPException(detail='Invalid token', **exc_args) from e
     except errors.ExpiredTokenError as e:
         raise HTTPException(detail='Expired token', **exc_args) from e
+    except errors.CorruptedTokenDataError as e:
+        raise HTTPException(detail='Corrupted token', **exc_args) from e
     try:
         revoked = revocation_checker(token)
         if revoked:
