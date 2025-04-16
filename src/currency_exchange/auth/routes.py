@@ -33,7 +33,10 @@ clients_router = APIRouter()
 
 @clients_router.post(
     '/register', status_code=status.HTTP_201_CREATED, response_model=UserCreatedResponse,
-    responses={401: {'model': UserCreationErrorResponse}}
+    responses={
+        401: {'model': UserCreationErrorResponse},
+        400: {'model': UserCreationErrorResponse, 'description': 'Submitted values invalid'},
+    }
 )
 async def create_user(
         username: Annotated[str, Form()], password1: Annotated[str, Form()], password2: Annotated[str, Form()]
@@ -42,7 +45,7 @@ async def create_user(
         logger.info('Unsuccessful attempt to register user %s', username)
         return JSONResponse(
             UserCreationErrorResponse.model_validate({'errors': {'password': ['Passwords do not match']}}),
-            status_code=status.HTTP_401_UNAUTHORIZED,
+            status_code=status.HTTP_400_BAD_REQUEST,
         )
 
     user_repo = get_users_repo()
