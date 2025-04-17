@@ -160,6 +160,11 @@ async def refresh_access_token(
     access_token_str, _, access_token_payload = token_issuer.get_access_token(scope=previous_access_scopes)
     refresh_token_str, _, refresh_token_payload = token_issuer.get_refresh_token(scope=token.claims.scope)
 
+    await revoke_all_users_tokens_per_device(user, token.claims.device_id)
+
+    await save_token_state_in_db(access_token_payload, 'access', user.id)
+    await save_token_state_in_db(refresh_token_payload, 'refresh', user.id)
+
     logger.info('Refreshed token for user %s', user.username)
     logger.debug(
         'Generated %s\'s tokens:\n%s\n%s\n(end of tokens)',
