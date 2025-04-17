@@ -17,8 +17,10 @@ from .providers import (
 )
 from .services.jwtservice import JWTValidator
 from .services.permissions import UserCategory
-from .utils import revoke_all_users_tokens_per_device, get_user_id_from_sub_jwt_claim, revoke_users_tokens, \
-    check_password
+from .utils import (
+    revoke_all_users_tokens_per_device, get_user_id_from_sub_jwt_claim, revoke_users_tokens,
+    check_password, save_token_state_in_db
+)
 
 logger = logging.getLogger('auth')
 
@@ -87,20 +89,8 @@ async def create_token(
 
     await revoke_all_users_tokens_per_device(user, device_id)
 
-    token_state_repo = get_token_state_repo()
-
-    await token_state_repo.save(
-        TokenStateDbIn(
-            id=access_token_payload['jti'], type=['access'], user_id=user.id,
-            device_id=access_token_payload['device_id'], expiry_date=access_token_payload['exp']
-        )
-    )
-    await token_state_repo.save(
-        TokenStateDbIn(
-            id=refresh_token_payload['jti'], type=['refresh'],
-            device_id=refresh_token_payload['device_id'], expiry_date=refresh_token_payload['exp']
-        )
-    )
+    await save_token_state_in_db(access_token_payload, 'access', user.id)
+    await save_token_state_in_db(refresh_token_payload, 'refresh', user.id)
 
     logger.info('Issued token for user %s', user.username)
     logger.debug(
