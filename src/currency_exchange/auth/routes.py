@@ -128,6 +128,12 @@ async def refresh_access_token(
     try:
         try:
             token = token_validator.token_validate(refresh_token)
+
+            token_owner_id = get_user_id_from_sub_jwt_claim(token.claims.sub)
+
+            if token_owner_id != user.id:
+                raise HTTPException(detail='Token owner does not match with client from request',
+                                    status_code=status.HTTP_403_FORBIDDEN)
         except errors.JWTValidationError as e:
             logger.debug(
                 'Token validation problem. Token header: %s. Token payload: %s',
@@ -147,11 +153,6 @@ async def refresh_access_token(
             raise HTTPException(detail='Revoked token. Authentication process should be repeated.', **exc_args)
     except errors.TokenDoesNotExistError as e:
         raise HTTPException(detail='Unrecognized token', **exc_args) from e
-
-    token_owner_id = get_user_id_from_sub_jwt_claim(token.claims.sub)
-
-    if token_owner_id != user.id:
-        raise HTTPException(detail='Token owner does not match with client from request', status_code=status.HTTP_403_FORBIDDEN)
 
     previous_access_scopes = token.claims.scope[1:] # first scope will always be 'refresh'
 
