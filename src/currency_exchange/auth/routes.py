@@ -119,10 +119,7 @@ async def refresh_access_token(
         token_validator: Annotated[JWTValidator, Depends(jwt_validator_provider)],
         revocation_checker: Annotated[RevocationCheckerType, Depends(jwt_revocation_checker_provider)],
 ):
-    exc_args = {
-        'status_code': status.HTTP_400_BAD_REQUEST,
-        'headers': {'WWW-Authenticate': 'Bearer'}
-    }
+    exc_args = {'status_code': status.HTTP_400_BAD_REQUEST}
 
     check_password(user, user_credentials.password)
 
