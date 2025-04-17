@@ -1,11 +1,11 @@
 import logging
-from typing import Optional
+from typing import Optional, Literal
 
 from fastapi import status, HTTPException
 
 from . import get_token_state_repo, get_users_repo, errors
 from .repos import TokenStateRepository, UsersRepository
-from .schemas import UserDbOut, TokenStateDbOut, TokenStateDbUpdate
+from .schemas import UserDbOut, TokenStateDbOut, TokenStateDbUpdate, TokenStateDbIn
 from .services.jwtservice import JWTModel
 from .services.passwordhashing import match_password
 
@@ -90,3 +90,13 @@ async def revoke_users_tokens(user: UserDbOut, jtis: Optional[list[str]] = None)
     else:
         logger.info('Revoked %s user %s tokens', len(tokens_jtis), user.username)
     return tokens_jtis
+
+
+async def save_token_state_in_db(token_payload: dict, type_: Literal['access', 'refresh'], user_id: int):
+    token_state_repo = get_token_state_repo()
+    await token_state_repo.save(
+        TokenStateDbIn(
+            id=token_payload['jti'], type=type_, user_id=user_id,
+            device_id=token_payload['device_id'], expiry_date=token_payload['exp']
+        )
+    )
