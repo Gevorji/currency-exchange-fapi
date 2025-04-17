@@ -35,6 +35,7 @@ clients_router = APIRouter()
     '/register', status_code=status.HTTP_201_CREATED, response_model=UserCreatedResponse,
     responses={
         400: {'model': UserCreationErrorResponse, 'description': 'Submitted values invalid'},
+        409: {'model': UserCreationErrorResponse, 'description': 'User already exists'},
     }
 )
 async def create_user(
@@ -63,10 +64,10 @@ async def create_user(
             UserCreationErrorResponse.model_validate({'errors': e.args[0]}),
             status_code=status.HTTP_400_BAD_REQUEST
         )
-    except errors.UserAlreadyExistsError as e:
+    except errors.UserAlreadyExistsError:
         JSONResponse(
             UserCreationErrorResponse.model_validate({'errors': {'username': ['Username already in use']}}),
-            status_code=status.HTTP_401_UNAUTHORIZED
+            status_code=status.HTTP_409_CONFLICT
         )
 
 
