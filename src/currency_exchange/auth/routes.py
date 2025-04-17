@@ -34,7 +34,6 @@ clients_router = APIRouter()
 @clients_router.post(
     '/register', status_code=status.HTTP_201_CREATED, response_model=UserCreatedResponse,
     responses={
-        401: {'model': UserCreationErrorResponse},
         400: {'model': UserCreationErrorResponse, 'description': 'Submitted values invalid'},
     }
 )
@@ -62,7 +61,7 @@ async def create_user(
     except ValueError as e:
         return JSONResponse(
             UserCreationErrorResponse.model_validate({'errors': e.args[0]}),
-            status_code=status.HTTP_401_UNAUTHORIZED
+            status_code=status.HTTP_400_BAD_REQUEST
         )
     except errors.UserAlreadyExistsError as e:
         JSONResponse(
