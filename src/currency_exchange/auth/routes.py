@@ -109,7 +109,9 @@ async def create_token(
 
 @token_router.post(
     '/refresh', response_model=TokenCreatedResponse,
-    responses={401: {'description': 'Invalid credentials'}, 403: {'description': 'User disabled'}}
+    responses={
+        401: {'description': 'Invalid credentials'}, 403: {'description': 'User disabled or token owner is not a user'}
+    }
 )
 async def refresh_access_token(
         user: Annotated[UserDbOut, Depends(get_active_user_http_basic_auth)],
@@ -149,7 +151,7 @@ async def refresh_access_token(
     token_owner_id = get_user_id_from_sub_jwt_claim(token.claims.sub)
 
     if token_owner_id != user.id:
-        raise HTTPException(detail='Token owner does not match with client from request', **exc_args)
+        raise HTTPException(detail='Token owner does not match with client from request', status_code=status.HTTP_403_FORBIDDEN)
 
     previous_access_scopes = token.claims.scope[1:] # first scope will always be 'refresh'
 
