@@ -11,8 +11,9 @@ from .utils import revoke_users_tokens
 
 admin_router = APIRouter(prefix='/admin', dependencies=[Security(scopes=[verify_access, 'all'])])
 
-users_ops_router = APIRouter(prefix='/users')
+users_ops_router = APIRouter(prefix='/users', tags=['users'])
 
+admin_router.include_router(users_ops_router)
 
 users_repo = get_users_repo()
 token_state_repo = get_token_state_repo()
