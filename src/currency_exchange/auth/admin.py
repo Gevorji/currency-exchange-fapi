@@ -125,7 +125,7 @@ async def promote_users_category(user_id: int, to: TransitionUsersCategories):
 
 
 @users_ops_router.patch(
-    '/{user_id}/downgrade', status_code=status.HTTP_200_OK, response_model=UserOut,
+    '/{user_id}/category/downgrade', status_code=status.HTTP_200_OK, response_model=UserOut,
     responses={
         409: {'description': 'Performed update conflicts with current state of user category'},
         **additional_openapi_responses_for_users
