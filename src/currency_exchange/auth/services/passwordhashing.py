@@ -4,7 +4,7 @@ import re
 import bcrypt
 
 from currency_exchange.config import auth_settings
-from utils.importobject import import_object
+from currency_exchange.utils.importobject import import_object
 
 ENCODING = 'utf-8'
 PASSWORD_COMPONENTS_EXTRACTION_PATTERN = re.compile('<(.+?)>\\$<(.+?)>')
