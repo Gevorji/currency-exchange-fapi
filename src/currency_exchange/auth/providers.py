@@ -8,7 +8,6 @@ from fastapi.security import (
 )
 from starlette.requests import Request
 
-from .routes import TOKEN_URL
 from .schemas import UserDbOut
 from .services.permissions import scopes_registry, UserCategory
 from .services.jwtservice import JWTValidator, JWTModel, JWTIssuer
@@ -18,6 +17,8 @@ from currency_exchange.config import auth_settings
 from .utils import check_jwt_revocation, get_user, get_active_user, get_user_from_sub_jwt_claim
 
 logger = logging.getLogger('auth')
+
+TOKEN_URL = '/token/gain'
 
 RevocationCheckerType = Callable[[JWTModel], Awaitable[bool]]
 
