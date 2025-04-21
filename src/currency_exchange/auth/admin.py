@@ -4,11 +4,12 @@ from enum import IntEnum
 from fastapi import APIRouter, Security, status, HTTPException
 
 from . import get_users_repo, get_token_state_repo, errors
+from .providers import verify_access
 from .schemas import UserDbOut, UserDbUpdate
 from .services.permissions import UserCategory
 from .utils import revoke_users_tokens
 
-admin_router = APIRouter(prefix='/admin', dependencies=[Security(scopes=['all'])])
+admin_router = APIRouter(prefix='/admin', dependencies=[Security(scopes=[verify_access, 'all'])])
 
 users_ops_router = APIRouter(prefix='/users')
 
