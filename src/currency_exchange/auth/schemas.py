@@ -23,6 +23,10 @@ class UserDbOut(_UserBase):
     password: str
 
 
+class UserOut(_UserBase):
+    id: int
+
+
 class UserDbUpdate(_UserBase):
     id: Optional[int] = None
     old_username: Optional[str] = None
