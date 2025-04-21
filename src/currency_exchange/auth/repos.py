@@ -5,6 +5,7 @@ import sqlalchemy
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from currency_exchange.db.session import async_session_factory
 from .schemas import UserDbOut, UserDbIn, UserDbUpdate, TokenStateDbOut, TokenStateDbIn, TokenStateDbUpdate
 from currency_exchange.db.repoabc import RepositoryABC
 from currency_exchange.db.crud import AsyncCrudMixin
@@ -176,3 +177,22 @@ class TokenStateRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC)
         if isinstance(id_, str):
             return UUID(hex=id_)
         return id_
+
+
+RepoType = RepositoryABC
+RepoClsType = type[RepoType]
+
+_repository_singletones = {}
+
+def _get_repo(repo_type: type[RepoType]) -> RepoType:
+    repo = _repository_singletones.get(repo_type)
+    if repo is None:
+        repo = repo_type(async_session_factory)
+        _repository_singletones[repo_type] = repo
+    return repo
+
+def get_users_repo() -> UsersRepository:
+    return _get_repo(UsersRepository)
+
+def get_token_state_repo() -> TokenStateRepository:
+    return _get_repo(TokenStateRepository)
