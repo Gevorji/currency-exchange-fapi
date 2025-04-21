@@ -5,7 +5,7 @@ from fastapi import APIRouter, Security, status, HTTPException
 
 from . import get_users_repo, get_token_state_repo, errors
 from .providers import verify_access
-from .schemas import UserDbOut, UserDbUpdate
+from .schemas import UserDbOut, UserDbUpdate, UserOut
 from .services.permissions import UserCategory
 from .utils import revoke_users_tokens
 
@@ -73,7 +73,7 @@ async def change_users_category(
 
 
 @users_ops_router.get(
-    '/search', status_code=status.HTTP_200_OK, response_model=UserDbOut,
+    '/search', status_code=status.HTTP_200_OK, response_model=UserOut,
     responses={**additional_openapi_responses_for_users}
 )
 async def get_user(username: str):
@@ -83,13 +83,13 @@ async def get_user(username: str):
         raise user_not_found_exception
 
 
-@users_ops_router.get('/all', status_code=status.HTTP_200_OK, response_model=list[UserDbOut])
+@users_ops_router.get('/all', status_code=status.HTTP_200_OK, response_model=list[UserOut])
 async def get_all_users():
     return await users_repo.get_all()
 
 
 @users_ops_router.patch(
-    '{user_id}/deactivate', status_code=status.HTTP_200_OK, response_model=UserDbOut,
+    '{user_id}/deactivate', status_code=status.HTTP_200_OK, response_model=UserOut,
         responses={
             409: {'description': 'User already deactivated or user is admin'},
             **additional_openapi_responses_for_users
@@ -102,7 +102,7 @@ async def make_user_inactive(user_id: int):
 
 
 @users_ops_router.patch(
-    '{user_id}/activate}', status_code=status.HTTP_200_OK, response_model=UserDbOut,
+    '{user_id}/activate}', status_code=status.HTTP_200_OK, response_model=UserOut,
     responses={
         409: {'description': 'User is already active or user is admin'},
         **additional_openapi_responses_for_users
@@ -114,7 +114,7 @@ async def make_user_active(user_id: int):
 
 
 @users_ops_router.patch(
-    '/{user_id}/category/promote', status_code=status.HTTP_200_OK, response_model=UserDbOut,
+    '/{user_id}/category/promote', status_code=status.HTTP_200_OK, response_model=UserOut,
     responses={
         409: {'description': 'Performed update conflicts with current state of user category'},
         **additional_openapi_responses_for_users
@@ -125,7 +125,7 @@ async def promote_users_category(user_id: int, to: TransitionUsersCategories):
 
 
 @users_ops_router.patch(
-    '/{user_id}/downgrade', status_code=status.HTTP_200_OK, response_model=UserDbOut,
+    '/{user_id}/downgrade', status_code=status.HTTP_200_OK, response_model=UserOut,
     responses={
         409: {'description': 'Performed update conflicts with current state of user category'},
         **additional_openapi_responses_for_users
