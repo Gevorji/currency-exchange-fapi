@@ -30,16 +30,13 @@ class User(SQLAModelBase):
     is_active: Mapped[bool] = mapped_column(default=True)
 
     def __init__(self, **kwargs):
+        username, password = kwargs.get("username"), kwargs.get("password")
+        self.validate_field_values({'username': username, 'password': password})
         self.id = kwargs.get("id")
-        self.username = kwargs.get("username")
+        self.username = username
         self.category = kwargs.get("category")
-        password = kwargs.get("password")
-        if password:
-            self.validate_fields(['username', 'password'])
+        if password is not None:
             self.set_password(password)
-        else:
-            self.validate_fields(['username'])
-            self.password = None
 
     def set_password(self, password: str) -> None:
         self.validate_password(password)
@@ -61,11 +58,13 @@ class User(SQLAModelBase):
             raise AttributeError('Password is not set.')
         return match_password(password, self.password)
 
-    def validate_fields(self, fields: list[str]):
+    def validate_field_values(self, fields: dict):
         errors = {}
         for field_name in fields:
             validator = getattr(self, f'validate_{field_name}', None)
-            field_value = getattr(self, field_name)
+            field_value = fields[field_name]
+            if field_value is None:
+                continue
             if validator:
                 try:
                     validator(field_value)
@@ -73,7 +72,6 @@ class User(SQLAModelBase):
                     errors[field_name] = e.args[0]
         if errors:
             raise ValueError(errors)
-
 
     def validate_username(self, username: str) -> None:
         complains = []
