@@ -45,7 +45,7 @@ class UsersRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC):
     _db_exception_handlers = {}
 
     def __init__(self, db_session_maker: async_sessionmaker[AsyncSession]):
-        self._db_session_maker = db_session_maker
+        self._session_factory = db_session_maker
 
     async def get(self, user_identity: str | int) -> UserDbOut:
         criteria, criteria_str = self._get_identity_criteria(user_identity)
@@ -111,7 +111,7 @@ class TokenStateRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC)
     _db_exception_handlers = {}
 
     def __init__(self, db_session_maker: async_sessionmaker[AsyncSession]):
-        self._db_session_maker = db_session_maker
+        self._session_factory = db_session_maker
 
     async def get(self, token_id: str | UUID) -> TokenStateDbOut:
         token_id = self._normalize_uuid(token_id)
@@ -143,7 +143,7 @@ class TokenStateRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC)
         await self._delete_object(self._root_model.id == token_id, f'No such token with id {token_id.hex}')
 
     async def get_users_tokens_per_device(self, user_id: int, device_id: str) -> list[TokenStateDbOut]:
-        with self._db_session_maker() as session:
+        with self._session_factory() as session:
             res = await session.execute(
                 select(TokenState)
                 .where(TokenState.user_id == user_id, TokenState.device_id == device_id, TokenState.revoked == False)
@@ -151,7 +151,7 @@ class TokenStateRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC)
         return [TokenStateDbOut.model_validate(t_model) for t_model in res.scalars().all()]
 
     async def get_users_tokens(self, user_id: int):
-        with self._db_session_maker() as session:
+        with self._session_factory() as session:
             res = await session.execute(
                 select(TokenState)
                 .where(TokenState.user_id == user_id,
@@ -160,7 +160,7 @@ class TokenStateRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC)
         return [TokenStateDbOut.model_validate(t_model) for t_model in res.scalars().all()]
 
     async def get_users_tokens_by_jti(self, user_id: int, jtis: list[str]) -> list[TokenStateDbOut]:
-        with self._db_session_maker() as session:
+        with self._session_factory() as session:
             res = await session.execute(
                 select(TokenState)
                 .where(TokenState.user_id == user_id, TokenState.id.in_(jtis), TokenState.revoked == False)
