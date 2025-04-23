@@ -148,7 +148,10 @@ async def refresh_access_token(
         revoked = await revocation_checker(token)
         if revoked:
             await revoke_all_users_tokens_per_device(user, token.claims.device_id)
-            raise HTTPException(detail='Revoked token. Authentication process should be repeated.', **exc_args)
+            raise HTTPException(
+                detail='Revoked token. Authentication process should be repeated.',
+                status_code=status.HTTP_403_FORBIDDEN
+            )
     except errors.TokenDoesNotExistError as e:
         raise HTTPException(detail='Unrecognized token', **exc_args) from e
 
