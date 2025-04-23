@@ -108,7 +108,9 @@ async def create_token(
 @token_router.post(
     '/refresh', response_model=TokenCreatedResponse,
     responses={
-        401: {'description': 'Invalid credentials'}, 403: {'description': 'User disabled or token owner is not a user'}
+        400: {'description': 'Token is invalid'},
+        401: {'description': 'Invalid credentials'},
+        403: {'description': 'User disabled or token owner is not a user, or token is revoked'}
     }
 )
 async def refresh_access_token(
