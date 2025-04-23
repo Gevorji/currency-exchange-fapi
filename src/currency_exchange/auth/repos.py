@@ -115,7 +115,7 @@ class TokenStateRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC)
 
     async def get(self, token_id: str | UUID) -> TokenStateDbOut:
         token_id = self._normalize_uuid(token_id)
-        return await self._get_object(token_id, f'No such token with {token_id}')
+        return await self._get_object(TokenState.id == token_id, f'No such token with {token_id}')
 
     async def get_all(self) -> list[TokenStateDbOut]:
         return await self._get_all_objects()
