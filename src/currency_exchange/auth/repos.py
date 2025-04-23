@@ -143,7 +143,7 @@ class TokenStateRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC)
         await self._delete_object(self._root_model.id == token_id, f'No such token with id {token_id.hex}')
 
     async def get_users_tokens_per_device(self, user_id: int, device_id: str) -> list[TokenStateDbOut]:
-        with self._session_factory() as session:
+        async with self._session_factory() as session:
             res = await session.execute(
                 select(TokenState)
                 .where(TokenState.user_id == user_id, TokenState.device_id == device_id, TokenState.revoked == False)
@@ -151,7 +151,7 @@ class TokenStateRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC)
         return [TokenStateDbOut.model_validate(t_model) for t_model in res.scalars().all()]
 
     async def get_users_tokens(self, user_id: int):
-        with self._session_factory() as session:
+        async with self._session_factory() as session:
             res = await session.execute(
                 select(TokenState)
                 .where(TokenState.user_id == user_id,
@@ -160,7 +160,7 @@ class TokenStateRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC)
         return [TokenStateDbOut.model_validate(t_model) for t_model in res.scalars().all()]
 
     async def get_users_tokens_by_jti(self, user_id: int, jtis: list[str]) -> list[TokenStateDbOut]:
-        with self._session_factory() as session:
+        async with self._session_factory() as session:
             res = await session.execute(
                 select(TokenState)
                 .where(TokenState.user_id == user_id, TokenState.id.in_(jtis), TokenState.revoked == False)
