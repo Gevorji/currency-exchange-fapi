@@ -16,7 +16,7 @@ async def check_jwt_revocation(jwt: JWTModel) -> bool:
     token_repo: TokenStateRepository = get_token_state_repo()
     token_state = await token_repo.get(jwt.claims.jti)
     logger.debug('Got revoked token. Owner: %s', jwt.claims.sub)
-    return token_state.is_revoked
+    return token_state.revoked
 
 
 async def get_user_from_sub_jwt_claim(sub: str) -> UserDbOut:
