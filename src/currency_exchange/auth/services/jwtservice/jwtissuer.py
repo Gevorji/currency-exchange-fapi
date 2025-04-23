@@ -23,7 +23,7 @@ class LoadKeyMixin:
     _algorithm: JWTAlgorithms = JWTAlgorithms.RS256
 
     def _load_key(self, key: KeyDataType | None, key_path: str | Path | None):
-        if not key_path or key:
+        if not (key_path or key):
             raise ValueError('Either key or key path must be provided')
         if key:
             return self._load_key_from_data(key)
