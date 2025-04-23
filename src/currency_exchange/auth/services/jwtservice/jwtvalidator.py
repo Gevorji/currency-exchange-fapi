@@ -40,9 +40,9 @@ class JWTValidator(LoadKeyMixin):
              }
          )
         except pydantic.ValidationError as e:
-         errors.InvalidTokenClaimError(
-             '; '.join(f'{err['loc']}: {err['msg']}' for err in e.errors()), token_obj.claims, token_obj.header
-         )
+            raise errors.InvalidTokenClaimError(
+                '; '.join(f'{err['loc']}: {err['msg']}' for err in e.errors()), token_obj.claims, token_obj.header
+            )
         except errors.JWTValidationError as e:
             e.header = token_obj.header
             e.payload = token_obj.claims
