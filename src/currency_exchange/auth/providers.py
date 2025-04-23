@@ -166,13 +166,13 @@ class JWTIssuerProvider:
     def get_access_token(self, scope: list[str] = None) -> tuple[str, dict, dict]:
         issuer = self.get_issuer(self._user)
         return issuer.get_access_token(
-            subject=self._get_sub_claim(), device_id=self._device_id, scope=scope
+            subject=self._get_sub_claim(), scope=scope, private_claims={'device_id': self._device_id}
         )
 
     def get_refresh_token(self, scope: list[str] = None) -> tuple[str, dict, dict]:
         issuer = self.get_issuer(self._user)
         return issuer.get_refresh_token(
-            subject=self._get_sub_claim(), device_id=self._device_id, scope=scope
+            subject=self._get_sub_claim(), scope=scope, private_claims={'device_id': self._device_id}
         )
 
     def get_issuer(self, user: UserDbOut) -> tuple[str, dict, dict]:
