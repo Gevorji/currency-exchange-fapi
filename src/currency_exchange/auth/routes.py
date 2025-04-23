@@ -145,7 +145,7 @@ async def refresh_access_token(
     except errors.ExpiredTokenError as e:
         raise HTTPException(detail='Expired token', **exc_args) from e
     try:
-        revoked = revocation_checker(token)
+        revoked = await revocation_checker(token)
         if revoked:
             await revoke_all_users_tokens_per_device(user, token.claims.device_id)
             raise HTTPException(detail='Revoked token. Authentication process should be repeated.', **exc_args)
