@@ -14,7 +14,10 @@ from .services.jwtservice import JWTValidator, JWTModel, JWTIssuer
 from .services.passwordhashing import match_password
 from . import errors
 from currency_exchange.config import auth_settings
-from .utils import check_jwt_revocation, get_user, get_active_user, get_user_from_sub_jwt_claim
+from .utils import (
+    check_jwt_revocation, get_user, get_active_user,
+    get_user_from_sub_jwt_claim, get_subject_claim_for_user
+)
 
 logger = logging.getLogger('auth')
 
@@ -179,4 +182,4 @@ class JWTIssuerProvider:
         return self._user_category_issuer_map[user.category]
 
     def _get_sub_claim(self) -> str:
-        return f'{self._subject_prefix}.{self._user.username}.id{self._user.id}'
+        return get_subject_claim_for_user(self._subject_prefix, self._user.username, self._user.id)
