@@ -35,6 +35,7 @@ class User(SQLAModelBase):
         self.id = kwargs.get("id")
         self.username = username
         self.category = kwargs.get("category")
+        self.is_active = kwargs.get("is_active")
         if password is not None:
             self.set_password(password)
 
