@@ -70,4 +70,16 @@ scopes_registry.define_standard_scopes_for(
     ]
 )
 
+scopes_registry.define_standard_scopes_for(
+    UserCategory.MANAGER,
+    [
+        'currency:create',
+        'currency:update',
+        'currency:request',
+        'exch_rate:create',
+        'exch_rate:update',
+        'exch_rate:request',
+    ]
+)
+
 scopes_registry.define_standard_scopes_for(UserCategory.ADMIN, ['all'])

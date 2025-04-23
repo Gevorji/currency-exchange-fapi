@@ -156,7 +156,10 @@ class JWTIssuerProvider:
         ),
         UserCategory.ADMIN: JWTIssuer.from_config(
             auth_settings, audience=_audience, scope=scopes_registry.get_standard_scopes_for(UserCategory.ADMIN)
-        )
+        ),
+        UserCategory.MANAGER: JWTIssuer.from_config(
+            auth_settings, audience=_audience, scope=scopes_registry.get_standard_scopes_for(UserCategory.MANAGER),
+        ),
     }
 
     def __init__(
