@@ -100,3 +100,7 @@ async def save_token_state_in_db(token_payload: dict, type_: Literal['access', '
             device_id=token_payload['device_id'], expiry_date=token_payload['exp']
         )
     )
+
+
+def get_subject_claim_for_user(prefix: str, username: str, user_id: int):
+    return f'{prefix}.{username}.id{user_id}'
