@@ -53,7 +53,8 @@ class TokenStateDbIn(_TokenStateBase):
 class TokenStateDbOut(TokenStateDbIn): ...
 
 
-class TokenStateDbUpdate(_TokenStateBase): ...
+class TokenStateDbUpdate(_TokenStateBase):
+    id: UUID4
 
 
 class UserCreatedResponse(_UserBase):
