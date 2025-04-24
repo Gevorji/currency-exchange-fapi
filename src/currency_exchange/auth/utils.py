@@ -79,7 +79,7 @@ async def revoke_users_tokens(user: UserDbOut, jtis: Optional[list[str]] = None)
         users_tokens = await token_state_repo.get_users_tokens_by_jti(user.id, jtis)
     else:
         users_tokens = await token_state_repo.get_users_tokens(user.id)
-    tokens_jtis = [token.claims.jti for token in users_tokens]
+    tokens_jtis = [token.id for token in users_tokens]
 
     if not users_tokens:
         logger.info('Tokens revocation: user %s has no active tokens', user.username)
