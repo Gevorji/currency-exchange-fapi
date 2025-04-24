@@ -59,6 +59,7 @@ async def create_user(
         except Exception as e:
             logger.info('Unsuccessful attempt to register user %s', username)
             logger.debug('Exception info of unsuccessful registration', username, exc_info=e)
+            raise
     except ValueError as e:
         return JSONResponse(
             UserCreationErrorResponse.model_validate({'errors': e.args[0]}),
