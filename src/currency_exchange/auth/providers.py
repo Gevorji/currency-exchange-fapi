@@ -111,10 +111,10 @@ async def verify_access(scopes: SecurityScopes, token: Annotated[JWTModel, Depen
         request.url, token.claims.sub, ', '.join(scope for scope in token.claims.scope), scopes.scope_str
     )
 
-    if 'all' in token.claims.scopes:
+    if 'all' in token.claims.scope:
         return
 
-    if not set(scopes.scopes).issubset(token.claims.scopes):
+    if not set(scopes.scopes).issubset(token.claims.scope):
         logger.debug('Access denied.')
         raise HTTPException(detail='Access denied', **forbidden_exc_args)
     if token.claims.scope[0] == 'refresh':
