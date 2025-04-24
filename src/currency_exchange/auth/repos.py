@@ -31,7 +31,7 @@ class ExceptionHandlerMixin:
                    self._handle_sqlalchemy_dbapi_exc(e)
                 exc_handler = self._db_exception_handlers.get(exc_type)
                 if exc_handler:
-                    exc_handler(e)
+                    exc_handler(self, e)
 
     def _handle_sqlalchemy_dbapi_exc(self, exc: sqlalchemy.exc.DBAPIError) -> None:
         raise errors.DataError(f'Error while performing operation: {exc.orig}')
