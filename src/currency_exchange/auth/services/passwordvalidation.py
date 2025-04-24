@@ -8,7 +8,7 @@ def min_length_validator(password: str) -> None:
         raise ValueError(f'Required minimum password length is {auth_settings.MIN_PASSWORD_LENGTH}.')
 
 def no_whitespace_chars_validator(password: str) -> None:
-    if string.whitespace in password:
+    if set(string.whitespace).intersection(password):
         raise ValueError(f'Whitespace characters are not allowed in password.')
 
 def get_all_password_validators():
