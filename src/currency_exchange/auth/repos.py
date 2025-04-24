@@ -58,7 +58,7 @@ class UsersRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC):
         if isinstance(user, UserDbUpdate):
             await self.update(user)
             return
-        user_model = await self._handle_db_exception(self._save_object(UserDbIn))
+        user_model = await self._handle_db_exception(self._save_object(user))
         return UserDbOut.model_validate(user_model)
 
     async def update(self, user: UserDbUpdate) -> None:
