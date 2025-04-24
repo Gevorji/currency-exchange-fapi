@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import Annotated
 
-from pydantic import BaseModel, field_validator, model_validator, BeforeValidator
+from pydantic import BaseModel, field_validator, model_validator, BeforeValidator, PrivateAttr
 from pydantic_core import PydanticCustomError
 from typing_extensions import Optional
 
@@ -20,6 +20,7 @@ class JWTHeaderModel(BaseModel):
 
 
 class JWTClaimsModel(BaseModel):
+    _validation_tstamp = PrivateAttr(datetime.now(tz=timezone.utc)) # time when validation is said to be started
     iss: str
     sub: str
     exp: datetime
@@ -30,22 +31,22 @@ class JWTClaimsModel(BaseModel):
     jti: Optional[str] = None
     device_id: Optional[str] = None
 
-    @field_validator('exp', mode='after')
-    @classmethod
-    def token_expiry_check(cls, value: datetime) -> datetime:
-        if value < datetime.now(tz=timezone.utc):
+    @model_validator(mode='after')
+    def token_expiry_check(self):
+        if self.exp < self._validation_tstamp:
             raise errors.ExpiredTokenError('Token has expired')
-        return value
+        return self
 
     @model_validator(mode='after')
     def time_fields_consistency_check(self):
-        if self.nbf and self.exp > self.nbf > self.iat:
+        now = datetime.now(tz=timezone.utc)
+        if self.nbf and self.exp > self.nbf > self._validation_tstamp > self.iat:
             return self
-        elif self.exp > self.iat:
+        elif self.exp > self._validation_tstamp > self.iat:
             return self
         else:
             raise errors.InvalidTokenClaimError(
-                'exp > nbf > iat should be true'
+                'exp > nbf > current_time > iat should be true'
             )
 
 
