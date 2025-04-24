@@ -32,6 +32,12 @@ class JWTClaimsModel(BaseModel):
     device_id: Optional[str] = None
 
     @model_validator(mode='after')
+    def issue_time_check(self):
+        if self.validation_tstamp.timestamp() - self.iat.timestamp() > -1:
+            return self
+        raise errors.InvalidTokenClaimError('iat < current_time+1sec  should be true')
+
+    @model_validator(mode='after')
     def token_expiry_check(self):
         if self.exp < self.validation_tstamp:
             raise errors.ExpiredTokenError('Token has expired')
@@ -39,13 +45,13 @@ class JWTClaimsModel(BaseModel):
 
     @model_validator(mode='after')
     def time_fields_consistency_check(self):
-        if self.nbf and self.exp > self.nbf > self.validation_tstamp > self.iat:
+        if self.nbf and self.exp > self.nbf  > self.iat:
             return self
-        elif self.exp > self.validation_tstamp > self.iat:
+        elif not self.nbf and self.exp > self.iat:
             return self
         else:
             raise errors.InvalidTokenClaimError(
-                'exp > nbf > current_time > iat should be true'
+                'exp > nbf > iat should be true'
             )
 
     @property
