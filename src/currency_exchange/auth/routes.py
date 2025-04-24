@@ -189,7 +189,9 @@ async def refresh_access_token(
 )
 async def revoke_users_token(
         user: Annotated[UserDbOut, Depends(get_active_user_http_basic_auth)],
+        user_credentials: Annotated[HTTPBasicCredentials, Depends(http_basic_auth_scheme)],
         tokens: Annotated[Optional[list[str]], Form()] = None
 ):
+    check_password(user, user_credentials.password)
     revoked = await revoke_users_tokens(user, tokens)
     return TokensRevokedResponse(revoked=revoked)
