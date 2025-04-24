@@ -37,7 +37,7 @@ class AsyncCrudMixin[RootModelType, InputModelType, OutputModelType]:
                 res = await session.execute(select(self._root_model))
         return [self._output_model.model_validate(obj) for obj in res.scalars().all()]
 
-    async def _save_object(self, input_object) -> None:
+    async def _save_object(self, input_object) -> RootModelType | None:
         model = self.create_root_model_from_dto(input_object)
         async with self._session_factory() as session:
             async with session.begin():
