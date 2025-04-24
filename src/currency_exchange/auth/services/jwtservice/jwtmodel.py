@@ -20,7 +20,7 @@ class JWTHeaderModel(BaseModel):
 
 
 class JWTClaimsModel(BaseModel):
-    _validation_tstamp = PrivateAttr(datetime.now(tz=timezone.utc)) # time when validation is said to be started
+    _validation_tstamp: datetime = PrivateAttr() # time when validation is said to be started
     iss: str
     sub: str
     exp: datetime
@@ -33,21 +33,26 @@ class JWTClaimsModel(BaseModel):
 
     @model_validator(mode='after')
     def token_expiry_check(self):
-        if self.exp < self._validation_tstamp:
+        if self.exp < self.validation_tstamp:
             raise errors.ExpiredTokenError('Token has expired')
         return self
 
     @model_validator(mode='after')
     def time_fields_consistency_check(self):
-        now = datetime.now(tz=timezone.utc)
-        if self.nbf and self.exp > self.nbf > self._validation_tstamp > self.iat:
+        if self.nbf and self.exp > self.nbf > self.validation_tstamp > self.iat:
             return self
-        elif self.exp > self._validation_tstamp > self.iat:
+        elif self.exp > self.validation_tstamp > self.iat:
             return self
         else:
             raise errors.InvalidTokenClaimError(
                 'exp > nbf > current_time > iat should be true'
             )
+
+    @property
+    def validation_tstamp(self):
+        if getattr(self, '_validation_tstamp', None) is None:
+            self._validation_tstamp = datetime.now(tz=timezone.utc)
+        return self._validation_tstamp
 
 
 class JWTModel(BaseModel):
