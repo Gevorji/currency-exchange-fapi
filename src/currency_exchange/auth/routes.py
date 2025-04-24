@@ -69,7 +69,7 @@ async def create_user(
             status_code=status.HTTP_400_BAD_REQUEST
         )
     except errors.UserAlreadyExistsError:
-        JSONResponse(
+        return JSONResponse(
             jsonable_encoder(
                 UserCreationErrorResponse.model_validate({'errors': {'username': ['Username already in use']}})
             ),
