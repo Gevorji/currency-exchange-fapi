@@ -5,6 +5,7 @@ from fastapi import APIRouter, Form, status, HTTPException
 from fastapi.params import Depends, Query
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBasicCredentials, OAuth2PasswordRequestForm
+from fastapi.encoders import jsonable_encoder
 
 from . import get_users_repo, get_token_state_repo, errors
 from .schemas import (
@@ -44,7 +45,9 @@ async def create_user(
     if password1 != password2:
         logger.info('Unsuccessful attempt to register user %s', username)
         return JSONResponse(
-            UserCreationErrorResponse.model_validate({'errors': {'password': ['Passwords do not match']}}),
+            jsonable_encoder(
+                UserCreationErrorResponse.model_validate({'errors': {'password': ['Passwords do not match']}})
+            ),
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -62,12 +65,14 @@ async def create_user(
             raise
     except ValueError as e:
         return JSONResponse(
-            UserCreationErrorResponse.model_validate({'errors': e.args[0]}),
+            jsonable_encoder(UserCreationErrorResponse.model_validate({'errors': e.args[0]})),
             status_code=status.HTTP_400_BAD_REQUEST
         )
     except errors.UserAlreadyExistsError:
         JSONResponse(
-            UserCreationErrorResponse.model_validate({'errors': {'username': ['Username already in use']}}),
+            jsonable_encoder(
+                UserCreationErrorResponse.model_validate({'errors': {'username': ['Username already in use']}})
+            ),
             status_code=status.HTTP_409_CONFLICT
         )
 
