@@ -96,7 +96,10 @@ async def get_all_users():
         }
 )
 async def make_user_inactive(user_id: int):
-    user = await users_repo.get(user_id)
+    try:
+        user = await users_repo.get(user_id)
+    except errors.UserDoesNotExistError:
+        raise user_not_found_exception
     await revoke_users_tokens(user)
     return await change_user_is_active(user, is_active=False, conflict_msg='User is admin or deactivated already')
 
@@ -109,7 +112,10 @@ async def make_user_inactive(user_id: int):
     }
 )
 async def make_user_active(user_id: int):
-    user = await users_repo.get(user_id)
+    try:
+        user = await users_repo.get(user_id)
+    except errors.UserDoesNotExistError:
+        raise user_not_found_exception
     return await change_user_is_active(user, is_active=True, conflict_msg='User is admin or is active already')
 
 
