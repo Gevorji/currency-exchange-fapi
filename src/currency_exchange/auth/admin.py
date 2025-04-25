@@ -13,7 +13,6 @@ admin_router = APIRouter(prefix='/admin', dependencies=[Security(verify_access, 
 
 users_ops_router = APIRouter(prefix='/users', tags=['users'])
 
-admin_router.include_router(users_ops_router)
 
 users_repo = get_users_repo()
 token_state_repo = get_token_state_repo()
@@ -133,3 +132,6 @@ async def promote_users_category(user_id: int, to: TransitionUsersCategories):
 )
 async def downgrade_users_category(user_id: int, to: TransitionUsersCategories):
     return await change_users_category(user_id, to, direction='down')
+
+
+admin_router.include_router(users_ops_router)
