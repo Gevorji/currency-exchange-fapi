@@ -36,6 +36,7 @@ class UserDbUpdate(_UserBase):
     def ensure_either_id_or_username_is_set(self):
         if self.id is None and self.old_username is None:
             raise ValueError('Either id or old_username must be set')
+        return self
 
 
 class _TokenStateBase(BaseModel):
