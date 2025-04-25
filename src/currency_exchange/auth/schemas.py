@@ -29,6 +29,7 @@ class UserOut(_UserBase):
 
 class UserDbUpdate(_UserBase):
     id: Optional[int] = None
+    username: Optional[str] = None
     old_username: Optional[str] = None
 
     @model_validator(mode='after')
