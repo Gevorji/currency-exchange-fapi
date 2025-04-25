@@ -71,6 +71,9 @@ async def validate_jwt(
             'headers': {'WWW-Authenticate': 'Bearer'}
     }
 
+    if not token_str:
+        raise HTTPException(**exc_args)
+
     try:
         try:
             token = token_validator.token_validate(token_str)
