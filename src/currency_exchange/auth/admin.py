@@ -89,7 +89,7 @@ async def get_all_users():
 
 
 @users_ops_router.patch(
-    '{user_id}/deactivate', status_code=status.HTTP_200_OK, response_model=UserOut,
+    '/{user_id}/deactivate', status_code=status.HTTP_200_OK, response_model=UserOut,
         responses={
             409: {'description': 'User already deactivated or user is admin'},
             **additional_openapi_responses_for_users
@@ -102,7 +102,7 @@ async def make_user_inactive(user_id: int):
 
 
 @users_ops_router.patch(
-    '{user_id}/activate}', status_code=status.HTTP_200_OK, response_model=UserOut,
+    '/{user_id}/activate', status_code=status.HTTP_200_OK, response_model=UserOut,
     responses={
         409: {'description': 'User is already active or user is admin'},
         **additional_openapi_responses_for_users
