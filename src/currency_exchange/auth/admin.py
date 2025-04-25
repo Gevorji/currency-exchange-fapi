@@ -9,7 +9,7 @@ from .schemas import UserDbOut, UserDbUpdate, UserOut
 from .services.permissions import UserCategory
 from .utils import revoke_users_tokens
 
-admin_router = APIRouter(prefix='/admin', dependencies=[Security(scopes=[verify_access, 'all'])])
+admin_router = APIRouter(prefix='/admin', dependencies=[Security(verify_access, scopes=['all'])])
 
 users_ops_router = APIRouter(prefix='/users', tags=['users'])
 
