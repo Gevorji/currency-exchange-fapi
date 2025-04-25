@@ -62,7 +62,7 @@ class UsersRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC):
         return UserDbOut.model_validate(user_model)
 
     async def update(self, user: UserDbUpdate) -> None:
-        update_values = user.model_dump(exclude={'old_username', 'id'}, exclude_defaults=True)
+        update_values = user.model_dump(exclude={'old_username', 'id'}, exclude_unset=True)
         criteria, criteria_str = self._get_identity_criteria(user.id or user.old_username)
         if update_values:
             await self._handle_db_exception(
@@ -129,7 +129,7 @@ class TokenStateRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC)
         return TokenStateDbOut.model_validate(token_state_model)
 
     async def update(self, token_state: TokenStateDbUpdate) -> None:
-        update_values = token_state.model_dump(exclude={'id'}, exclude_defaults=True)
+        update_values = token_state.model_dump(exclude={'id'}, exclude_unset=True)
         if update_values:
             await self._handle_db_exception(
                 self._update_object(
