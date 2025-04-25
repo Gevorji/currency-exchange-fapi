@@ -35,7 +35,7 @@ async def change_user_is_active(user: UserDbOut, is_active: bool, conflict_msg: 
     if user.category is UserCategory.ADMIN or user.is_active is is_active:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=conflict_msg)
     try:
-        await users_repo.update(UserDbUpdate(id=user.user_id, is_active=is_active))
+        await users_repo.update(UserDbUpdate(id=user.id, is_active=is_active))
     except errors.UserDoesNotExistError:
         raise user_not_found_exception
 
