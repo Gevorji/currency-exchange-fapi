@@ -90,7 +90,7 @@ async def validate_jwt(
     except errors.CorruptedTokenDataError as e:
         raise HTTPException(detail='Corrupted token', **exc_args) from e
     try:
-        revoked = revocation_checker(token)
+        revoked = await revocation_checker(token)
         if revoked:
             raise HTTPException(detail='Revoked token', **exc_args)
     except errors.TokenDoesNotExistError as e:
