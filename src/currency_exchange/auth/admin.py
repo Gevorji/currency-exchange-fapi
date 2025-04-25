@@ -26,6 +26,7 @@ user_not_found_exception = HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
 
 
 class TransitionUsersCategories(IntEnum):
+    ADMIN = 1
     MANAGER = 0
     API_CLIENT = -1
 
