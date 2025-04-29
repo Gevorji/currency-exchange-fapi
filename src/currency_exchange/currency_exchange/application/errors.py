@@ -1,0 +1,16 @@
+from ..domain.errors import CurrencyCoreError
+
+
+class CurrenciesConvertionError(CurrencyCoreError): ...
+
+
+class DataRequestError(CurrencyCoreError): ...
+
+
+class ExchangeRateDoesntExistError(DataRequestError): ...
+
+
+class CurrencyDoesNotExistError(DataRequestError): ...
+
+
+class CrossExchangeRatesDoesntExistError(CurrencyDoesNotExistError): ...
