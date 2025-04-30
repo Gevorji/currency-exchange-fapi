@@ -5,20 +5,7 @@ from typing import Optional, Any
 from collections import UserString
 
 from . import errors
-
-
-class CurrencyCode(UserString):
-
-    def __init__(self, code: str, *args: Any, **kwargs: Any) -> None:
-        if not code.isalpha() or len(code) != 3:
-            raise errors.IncorrectCurrencyCodeError("Currency code must consist of 3 alphabetic characters")
-        super().__init__(code.upper(), *args, **kwargs)
-        
-
-class CurrencyName(UserString): ...
-
-
-class CurrencySign(UserString): ...
+from .types import CurrencyCode, CurrencySign, CurrencyName, ExchangeRateValue
 
 
 @dataclass(slots=True, frozen=True)
@@ -35,19 +22,19 @@ class Currency:
 class CurrenciesExchangeRate:
     base: Currency
     target: Currency
-    value: int | float
+    rate: ExchangeRateValue
     amount: InitVar[int | float] = 1
     decimal_fmt_precision: int = field(kw_only=True, default=2)
 
     def __post_init__(self, amount):
-        self.value = self.value / amount
+        self.rate.value = self.rate.value / amount
 
     def get_reversed(self, *, as_decimal: bool = False, precision: int = None) -> 'CurrenciesExchangeRate':
-        reversed_value = 1/self.value
+        reversed= 1/self.rate.value
         if as_decimal:
-            reversed_value = self._to_decimal_value(reversed_value, precision)
+            reversed = self._to_decimal_value(reversed, precision)
         return self.__class__(
-            self.target, self.base, reversed_value,
+            self.target, self.base, reversed,
             decimal_fmt_precision=precision or self.decimal_fmt_precision
         )
 
@@ -57,12 +44,12 @@ class CurrenciesExchangeRate:
 
     def as_decimal(self, precision: int = None) -> 'CurrenciesExchangeRate':
         return self.__class__(
-            self.base, self.target, self._to_decimal_value(self.value, precision),
+            self.base, self.target, ExchangeRateValue(self._to_decimal_value(self.value, precision)),
             decimal_fmt_precision=precision or self.decimal_fmt_precision
         )
 
     def convert(self, amount: int | float) -> int | float:
-        return self.value * amount
+        return self.rate.value * amount
 
     def get_cross_rate(self, exchange_rate: 'CurrenciesExchangeRate', precision: int = None):
         common = {self.base.code, self.target.code}.intersection({exchange_rate.base.code, exchange_rate.target.code})
@@ -75,9 +62,9 @@ class CurrenciesExchangeRate:
 
         return self.__class__(
             rate1_normalized.base, rate2_normalized.base,
-            rate1_normalized.value / rate2_normalized.value,
+            rate1_normalized.rate.value / rate2_normalized.rate.value,
             decimal_fmt_precision=precision or self.decimal_fmt_precision
         )
 
     def __str__(self) -> str:
-        return f'<Currencies exchange rate: {self.base.code}-{self.target}, value: {self.value}>'
+        return f'<Currencies exchange rate: {self.base.code}-{self.target}, value: {self.rate.value}>'

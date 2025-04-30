@@ -1,10 +1,10 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, InitVar
 from typing import Optional
 
-from ..domain.entities import CurrencyCode, CurrencyName, CurrencySign
 from .extdm import (
     IdentifiedCurrency as Currency, IdentifiedCurrenciesExchangeRate as CurrenciesExchangeRate
 )
+from ..domain.types import ExchangeRateValue, CurrencyCode, CurrencyName, CurrencySign
 
 
 @dataclass(slots=True)
@@ -23,14 +23,14 @@ class CurrencyDto:
 class ExchangeRateDto:
     base_currency: CurrencyDto
     target_currency: CurrencyDto
-    value: int | float
+    rate: ExchangeRateValue
     id: Optional[int] = None
 
     @classmethod
     def from_dm(cls, dm: CurrenciesExchangeRate):
         return cls(
             base_currency=CurrencyDto.from_dm(dm.base),
-            target_currency=CurrencyDto.from_dm(dm.target), value=dm.value
+            target_currency=CurrencyDto.from_dm(dm.target), rate=dm.rate
         )
 
 
@@ -38,7 +38,7 @@ class ExchangeRateDto:
 class ConvertedCurrenciesPairDto:
     base_currency: CurrencyDto
     target_currency: CurrencyDto
-    exchange_rate: ExchangeRateDto
+    exchange_rate: ExchangeRateValue
     base_currency_amount: int | float
     target_currency_amount: int | float
 
@@ -54,9 +54,11 @@ class AddCurrencyDto:
 class AddExchangeRateDto:
     base_currency: CurrencyCode
     target_currency: CurrencyCode
-    value: int | float
-    amount: int | float = field(default=1)
+    rate: ExchangeRateValue
+    amount: InitVar[int | float] = field(default=1)
 
+    def __post_init__(self, amount):
+        self.value = self.rate.value * amount
 
 @dataclass(slots=True)
 class AlterCurrencyDto:
@@ -69,8 +71,11 @@ class AlterCurrencyDto:
 class AlterExchangeRateDto:
     base_currency: CurrencyCode
     target_currency: CurrencyCode
-    new_value: int | float
-    amount: int | float = field(default=1)
+    new_rate: ExchangeRateValue
+    amount: InitVar[int | float] = field(default=1)
+
+    def __post_init__(self, amount):
+        self.new_value = self.new_rate.value * amount
 
 
 @dataclass(slots=True)
