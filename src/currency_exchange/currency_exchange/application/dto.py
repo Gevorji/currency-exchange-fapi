@@ -84,7 +84,7 @@ class DeleteCurrencyDto:
 
 
 @dataclass(slots=True)
-class DeleteExchangeRateDto(DeleteCurrencyDto):
+class DeleteExchangeRateDto:
     base_currency: CurrencyCode
     target_currency: CurrencyCode
 
