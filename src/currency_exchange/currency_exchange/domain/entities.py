@@ -5,7 +5,7 @@ from typing import Optional, Any
 from collections import UserString
 
 from . import errors
-from .types import CurrencyCode, CurrencySign, CurrencyName, ExchangeRateValue
+from .types import CurrencyCode, CurrencySign, CurrencyName, ExchangeRateValue, CurrencyAmount
 
 
 @dataclass(slots=True, frozen=True)
@@ -23,11 +23,11 @@ class CurrenciesExchangeRate:
     base: Currency
     target: Currency
     rate: ExchangeRateValue
-    amount: InitVar[int | float] = 1
+    amount: InitVar[CurrencyAmount] = 1
     decimal_fmt_precision: int = field(kw_only=True, default=2)
 
     def __post_init__(self, amount):
-        self.rate.value = self.rate.value / amount
+        self.rate.value = self.rate.value / amount.value
 
     def get_reversed(self, *, as_decimal: bool = False, precision: int = None) -> 'CurrenciesExchangeRate':
         reversed= 1/self.rate.value

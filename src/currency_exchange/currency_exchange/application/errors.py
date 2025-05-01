@@ -1,4 +1,5 @@
-from ..domain.errors import CurrencyCoreError
+from ..domain.errors import (CurrencyCoreError, IncorrectCurrencyAmount, IncorrectCurrencyCodeError,
+                             IncorrectExchangeRateValue, CrossExchangeRateComputationError)
 
 
 class CurrenciesConvertionError(CurrencyCoreError): ...

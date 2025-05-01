@@ -4,7 +4,7 @@ from typing import Optional
 from .extdm import (
     IdentifiedCurrency as Currency, IdentifiedCurrenciesExchangeRate as CurrenciesExchangeRate
 )
-from ..domain.types import ExchangeRateValue, CurrencyCode, CurrencyName, CurrencySign
+from ..domain.types import ExchangeRateValue, CurrencyCode, CurrencyName, CurrencySign, CurrencyAmount
 
 
 @dataclass(slots=True)
@@ -55,10 +55,10 @@ class AddExchangeRateDto:
     base_currency: CurrencyCode
     target_currency: CurrencyCode
     rate: ExchangeRateValue
-    amount: InitVar[int | float] = field(default=1)
+    amount: InitVar[CurrencyAmount] = field(default=1)
 
     def __post_init__(self, amount):
-        self.value = self.rate.value * amount
+        self.value = self.rate.value * amount.value
 
 @dataclass(slots=True)
 class AlterCurrencyDto:
@@ -72,10 +72,10 @@ class AlterExchangeRateDto:
     base_currency: CurrencyCode
     target_currency: CurrencyCode
     new_rate: ExchangeRateValue
-    amount: InitVar[int | float] = field(default=1)
+    amount: InitVar[CurrencyAmount] = field(default=1)
 
     def __post_init__(self, amount):
-        self.new_value = self.new_rate.value * amount
+        self.new_value = self.new_rate.value * amount.value
 
 
 @dataclass(slots=True)
@@ -105,5 +105,5 @@ class GetExchangeRateDto:
 class MakeConvertionDto:
     from_currency: CurrencyCode
     to_currency: CurrencyCode
-    amount: int | float
+    amount: CurrencyAmount
 
