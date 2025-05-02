@@ -66,6 +66,41 @@ class AuthConfig(BaseSettings):
     MIN_PASSWORD_LENGTH: int = 8
     USERNAME_MIN_LENGTH: int = 5
 
+
+class PermissionsConfig(BaseSettings):
+    scopes: dict[str, str] = {
+        'all': 'All permissions granted',
+        'currency:create': 'Create currency',
+        'currency:delete': 'Delete currency',
+        'currency:update': 'Update currency',
+        'currency:request': 'Request currencies',
+        'exch_rate:create': 'Create exchange rate',
+        'exch_rate:delete': 'Delete exchange rate',
+        'exch_rate:update': 'Update exchange rate',
+        'exch_rate:request': 'Request exchange rates',
+    }
+
+    scopes_usr_category_bindings: dict[str, list[str]] = {
+        'API_CLIENT': [
+        'currency:create',
+        'currency:update',
+        'currency:request',
+        'exch_rate:create',
+        'exch_rate:update',
+        'exch_rate:request',
+        ],
+        'MANAGER': [
+        'currency:create',
+        'currency:update',
+        'currency:request',
+        'exch_rate:create',
+        'exch_rate:update',
+        'exch_rate:request',
+        ],
+        'ADMIN': ['all'],
+    }
+
 db_conn_settings = DbConnectionSettings()
 general_settings = GeneralSettings()
 auth_settings = AuthConfig()
+permissions_settings = PermissionsConfig()
