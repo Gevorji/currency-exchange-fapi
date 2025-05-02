@@ -1,6 +1,8 @@
 from collections import defaultdict
 from enum import Enum
 
+from currency_exchange.config import permissions_settings
+
 class UserCategory(Enum):
     API_CLIENT = 'API_CLIENT'
     ANONYMOUS_CLIENT = 'ANONYMOUS_CLIENT'
@@ -44,42 +46,14 @@ class OAuthScopeRegistry:
         if diff:
             raise ValueError(f'No scopes defined inside registry: {diff}')
 
-scopes_registry = OAuthScopeRegistry(
-    {
-        'all': 'All permissions granted',
-        'currency:create': 'Create currency',
-        'currency:delete': 'Delete currency',
-        'currency:update': 'Update currency',
-        'currency:request': 'Request currencies',
-        'exch_rate:create': 'Create exchange rate',
-        'exch_rate:delete': 'Delete exchange rate',
-        'exch_rate:update': 'Update exchange rate',
-        'exch_rate:request': 'Request exchange rates',
-    }
-)
 
-scopes_registry.define_standard_scopes_for(
-    UserCategory.API_CLIENT,
-    [
-        'currency:create',
-        'currency:update',
-        'currency:request',
-        'exch_rate:create',
-        'exch_rate:update',
-        'exch_rate:request',
-    ]
-)
+def get_scopes_registry_from_conf(config):
+    registry = OAuthScopeRegistry(config.scopes)
 
-scopes_registry.define_standard_scopes_for(
-    UserCategory.MANAGER,
-    [
-        'currency:create',
-        'currency:update',
-        'currency:request',
-        'exch_rate:create',
-        'exch_rate:update',
-        'exch_rate:request',
-    ]
-)
+    for user_category, scopes in config.scopes_usr_category_bindings.items():
+        registry.define_standard_scopes_for(UserCategory[user_category], scopes)
 
-scopes_registry.define_standard_scopes_for(UserCategory.ADMIN, ['all'])
+    return registry
+
+
+scopes_registry = get_scopes_registry_from_conf(permissions_settings)
