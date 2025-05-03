@@ -48,8 +48,8 @@ class CurrenciesExchangeRate:
             decimal_fmt_precision=precision or self.decimal_fmt_precision
         )
 
-    def convert(self, amount: int | float) -> int | float:
-        return self.rate.value * amount
+    def convert(self, amount: CurrencyAmount) -> int | float:
+        return self.rate.value * amount.value
 
     def get_cross_rate(self, exchange_rate: 'CurrenciesExchangeRate', precision: int = None):
         common = {self.base.code, self.target.code}.intersection({exchange_rate.base.code, exchange_rate.target.code})
