@@ -13,6 +13,7 @@ class GeneralSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file='.env', extra='ignore')
 
     DEBUG: Literal['True', 'False', '1', '0'] = 'False'
+    APP_LOG_LEVEL: Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'] = 'INFO'
 
     @field_validator('DEBUG', mode='after')
     @classmethod
