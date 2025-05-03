@@ -39,8 +39,8 @@ class ConvertedCurrenciesPairDto:
     base_currency: CurrencyDto
     target_currency: CurrencyDto
     exchange_rate: ExchangeRateValue
-    base_currency_amount: int | float
-    target_currency_amount: int | float
+    base_currency_amount: CurrencyAmount
+    target_currency_amount: CurrencyAmount
 
 
 @dataclass(slots=True)

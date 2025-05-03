@@ -2,6 +2,8 @@ from ..dto import (
     MakeConvertionDto, GetExchangeRateDto, ExchangeRateDto, ConvertedCurrenciesPairDto,
     AlterExchangeRateDto, AddExchangeRateDto, DeleteExchangeRateDto, CurrencyDto
 )
+
+from ...domain.types import CurrencyAmount
 from ..interfaces import ExchangeRatesRepoInterface
 from .erfetchstrategies import ExchangeRateFetchStrategy as ERFetchStrat
 from .. import errors
@@ -107,5 +109,5 @@ class ConvertCurrencyInteraction:
         return ConvertedCurrenciesPairDto(
             CurrencyDto.from_dm(rate.base),
             CurrencyDto.from_dm(rate.target),
-            rate.rate, convertion_data.amount, rate.convert(convertion_data.amount)
+            rate.rate, convertion_data.amount, CurrencyAmount(rate.convert(convertion_data.amount))
         )
