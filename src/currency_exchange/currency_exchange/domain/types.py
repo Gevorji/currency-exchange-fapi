@@ -12,10 +12,18 @@ class CurrencyCode(UserString):
         super().__init__(code.upper(), *args, **kwargs)
 
 
-class CurrencyName(UserString): ...
+class CurrencyName(UserString):
+    def __init__(self, name: str, *args: Any, **kwargs: Any) -> None:
+        if len(name) == 0:
+            raise errors.IncorrectCurrencyName("Currency name cannot be blank")
+        super().__init__(name, *args, **kwargs)
 
 
-class CurrencySign(UserString): ...
+class CurrencySign(UserString):
+    def __init__(self, sign: str, *args: Any, **kwargs: Any) -> None:
+        if len(sign) == 0:
+            raise errors.IncorrectCurrencySign("Currency sign cannot be blank")
+        super().__init__(sign, *args, **kwargs)
 
 
 class ExchangeRateValue:
