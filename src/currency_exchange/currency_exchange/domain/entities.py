@@ -23,7 +23,7 @@ class CurrenciesExchangeRate:
     base: Currency
     target: Currency
     rate: ExchangeRateValue
-    amount: InitVar[CurrencyAmount] = 1
+    amount: InitVar[CurrencyAmount] = CurrencyAmount(1)
     decimal_fmt_precision: int = field(kw_only=True, default=2)
 
     def __post_init__(self, amount):
