@@ -58,7 +58,7 @@ class AddExchangeRateDto:
     amount: InitVar[CurrencyAmount] = field(default=CurrencyAmount(1))
 
     def __post_init__(self, amount):
-        self.value = self.rate.value * amount.value
+        self.rate = ExchangeRateValue(self.rate.value * amount.value)
 
 @dataclass(slots=True)
 class AlterCurrencyDto:
@@ -75,7 +75,7 @@ class AlterExchangeRateDto:
     amount: InitVar[CurrencyAmount] = field(default=CurrencyAmount(1))
 
     def __post_init__(self, amount):
-        self.new_value = self.new_rate.value * amount.value
+        self.new_rate = ExchangeRateValue(self.new_rate.value * amount.value)
 
 
 @dataclass(slots=True)
