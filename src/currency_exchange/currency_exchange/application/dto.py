@@ -30,7 +30,7 @@ class ExchangeRateDto:
     def from_dm(cls, dm: CurrenciesExchangeRate):
         return cls(
             base_currency=CurrencyDto.from_dm(dm.base),
-            target_currency=CurrencyDto.from_dm(dm.target), rate=dm.rate
+            target_currency=CurrencyDto.from_dm(dm.target), rate=dm.rate, id=dm.id
         )
 
 
