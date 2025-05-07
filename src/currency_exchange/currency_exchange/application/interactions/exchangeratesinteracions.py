@@ -41,7 +41,7 @@ async def _get_exchange_rate(
 
     cross_rates = await exchange_rates_repo.get_cross_rates(rate_data)
     if not cross_rates:
-        errors.ExchangeRateDoesntExistError(f'Couldn\'t find cross-rates for '
+        raise errors.ExchangeRateDoesntExistError(f'Couldn\'t find cross-rates for '
                                             f'{rate_data.base_currency}-{rate_data.target_currency}')
     cross_rates = cross_rates[0]
 
