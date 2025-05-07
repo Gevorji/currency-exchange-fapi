@@ -34,7 +34,7 @@ class CurrenciesExchangeRate:
         if as_decimal:
             reversed = self._to_decimal_value(reversed, precision)
         return self.__class__(
-            self.target, self.base, reversed,
+            self.target, self.base, ExchangeRateValue(reversed),
             decimal_fmt_precision=precision or self.decimal_fmt_precision
         )
 
@@ -62,7 +62,7 @@ class CurrenciesExchangeRate:
 
         return self.__class__(
             rate1_normalized.base, rate2_normalized.base,
-            rate1_normalized.rate.value / rate2_normalized.rate.value,
+            ExchangeRateValue(rate1_normalized.rate.value / rate2_normalized.rate.value),
             decimal_fmt_precision=precision or self.decimal_fmt_precision
         )
 
