@@ -20,7 +20,7 @@ async def check_jwt_revocation(jwt: JWTModel) -> bool:
 
 
 async def get_user_from_sub_jwt_claim(sub: str) -> UserDbOut:
-    username = sub.rsplit('.', 1)[-2]
+    username = sub.rsplit('.', 2)[-2]
     user_repo = get_users_repo()
     return await user_repo.get(username)
 
