@@ -12,7 +12,7 @@ from currency_exchange.config import auth_settings
 from currency_exchange.config import db_conn_settings
 from currency_exchange.db.base import Base as BaseModel
 import currency_exchange.db.session
-import currency_exchange.auth.repos
+from currency_exchange.auth.repos import get_users_repo, get_token_state_repo
 import currency_exchange.currency_exchange.fapiadoption.appadapter
 
 TEST_DB_NAME = f'test_{db_conn_settings.DB_NAME}'
@@ -91,8 +91,8 @@ async def local_sessionmaker(db_connection):
 
 @pytest.fixture(autouse=True)
 async def mock_auth_app_sessionmaker(monkeypatch, local_sessionmaker):
-    monkeypatch.setattr(currency_exchange.auth.repos,
-                        'async_session_factory', local_sessionmaker)
+    monkeypatch.setattr(get_users_repo(), '_session_factory', local_sessionmaker)
+    monkeypatch.setattr(get_token_state_repo(), '_session_factory', local_sessionmaker)
 
 @pytest.fixture(autouse=True)
 async def mock_currency_exchange_app_sessionmaker(monkeypatch, local_sessionmaker):

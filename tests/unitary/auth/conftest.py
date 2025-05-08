@@ -160,10 +160,6 @@ async def existing_revoked_refresh_token(user, token_issuer, db_session):
     return token
 
 
-@pytest.fixture(autouse=True)
-def mock_repositories_session_factories(monkeypatch, local_sessionmaker):
-    monkeypatch.setattr(get_users_repo(), '_session_factory', local_sessionmaker)
-    monkeypatch.setattr(get_token_state_repo(), '_session_factory', local_sessionmaker)
 
 
 @pytest.fixture
