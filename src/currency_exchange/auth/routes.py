@@ -2,7 +2,7 @@ from typing import Annotated, Literal, Optional
 import logging
 
 from fastapi import APIRouter, Form, status, HTTPException
-from fastapi.params import Depends, Query
+from fastapi.params import Depends
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBasicCredentials, OAuth2PasswordRequestForm
 from fastapi.encoders import jsonable_encoder
@@ -24,8 +24,6 @@ from .utils import (
 )
 
 logger = logging.getLogger('auth')
-
-auth_router = APIRouter()
 
 token_router = APIRouter()
 
