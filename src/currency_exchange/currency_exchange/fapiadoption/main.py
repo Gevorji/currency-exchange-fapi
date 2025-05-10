@@ -1,10 +1,9 @@
 from alembic.util import status
-from fastapi import FastAPI, Security, Request, HTTPException, status
+from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 
-from currency_exchange.auth.providers import verify_access
 from .routes.currencies import currencies_router
 from .routes.exchangerates import exchange_rates_router
 from .routes.currenciesconvertion import currencies_convertion_router
