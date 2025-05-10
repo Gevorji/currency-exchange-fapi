@@ -2,7 +2,8 @@ from dataclasses import dataclass, field, InitVar
 from typing import Optional
 
 from .extdm import (
-    IdentifiedCurrency as Currency, IdentifiedCurrenciesExchangeRate as CurrenciesExchangeRate
+    IdentifiedCurrency as Currency, IdentifiedCurrenciesExchangeRate as CurrenciesExchangeRate, IdentifiedCurrency,
+    IdentifiedCurrenciesExchangeRate
 )
 from ..domain.types import ExchangeRateValue, CurrencyCode, CurrencyName, CurrencySign, CurrencyAmount
 
@@ -15,8 +16,9 @@ class CurrencyDto:
     id: Optional[int] = None
 
     @classmethod
-    def from_dm(cls, dm: Currency):
-        return cls(code=dm.code, name=dm.name, sign=dm.sign, id=dm.id)
+    def from_dm(cls, dm: Currency | IdentifiedCurrency):
+        id_ = dm.id if isinstance(dm, IdentifiedCurrency) else None
+        return cls(code=dm.code, name=dm.name, sign=dm.sign, id=id_)
 
 
 @dataclass(slots=True)
@@ -27,10 +29,11 @@ class ExchangeRateDto:
     id: Optional[int] = None
 
     @classmethod
-    def from_dm(cls, dm: CurrenciesExchangeRate):
+    def from_dm(cls, dm: CurrenciesExchangeRate | IdentifiedCurrenciesExchangeRate):
+        id_ = dm.id if isinstance(dm, IdentifiedCurrenciesExchangeRate) else None
         return cls(
-            base_currency=CurrencyDto.from_dm(dm.base),
-            target_currency=CurrencyDto.from_dm(dm.target), rate=dm.rate, id=dm.id
+            base_currency=CurrencyDto.from_dm(dm.base), # type: ignore[arg-type]
+            target_currency=CurrencyDto.from_dm(dm.target), rate=dm.rate, id=id_ # type: ignore[arg-type]
         )
 
 

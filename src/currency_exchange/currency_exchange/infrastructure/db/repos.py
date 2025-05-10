@@ -162,7 +162,7 @@ class ExchangeRatesPostgresRepo(ExchangeRatesRepoInterface):
 
     async def get_cross_rates(
             self, rate: GetExchangeRateDto
-    ) -> list[list[CurrenciesExchangeRate, CurrenciesExchangeRate]]:
+    ) -> list[tuple[CurrenciesExchangeRate, CurrenciesExchangeRate]]:
         id_res = await self._get_currencies_ids(rate.base_currency.data, rate.target_currency.data)
         base_crncy_id = id_res[rate.base_currency]
         target_crncy_id = id_res[rate.target_currency]
@@ -192,7 +192,7 @@ class ExchangeRatesPostgresRepo(ExchangeRatesRepoInterface):
                     ),
                 )
             )
-        return [[orm_ex_rate_to_dm_ex_rate(rate1), orm_ex_rate_to_dm_ex_rate(rate2)] for rate1, rate2 in res]
+        return [(orm_ex_rate_to_dm_ex_rate(rate1), orm_ex_rate_to_dm_ex_rate(rate2)) for rate1, rate2 in res]
 
     async def _get_currencies_ids(self, *currencies: *Sequence[CurrencyCode]) -> dict[CurrencyCode, int]:
         async with self._session_factory() as session:

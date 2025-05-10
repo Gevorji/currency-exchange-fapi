@@ -1,4 +1,5 @@
 from collections import UserString
+from decimal import Decimal
 from typing import Any
 
 from . import errors
@@ -28,7 +29,7 @@ class CurrencySign(UserString):
 
 class ExchangeRateValue:
 
-    def __init__(self, value: int | float):
+    def __init__(self, value: int | float | Decimal):
         if not value > 0 or value in [float("inf"), float("-inf")]:
             raise errors.IncorrectExchangeRateValue(f'Invalid value for exchange rate {value}')
         self.value = value
