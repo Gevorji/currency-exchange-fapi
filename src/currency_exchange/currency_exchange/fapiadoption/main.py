@@ -3,16 +3,21 @@ from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from fastapi.routing import APIRoute
 
 from .routes.currencies import currencies_router
 from .routes.exchangerates import exchange_rates_router
 from .routes.currenciesconvertion import currencies_convertion_router
 
 
-app = FastAPI()
-app.include_router(currencies_router)
-app.include_router(exchange_rates_router)
-app.include_router(currencies_convertion_router)
+def custom_generate_unique_id(route: APIRoute):
+    return f"{route.tags[0]}-{route.name}"
+
+
+app = FastAPI(generate_unique_id_function=custom_generate_unique_id)
+app.include_router(currencies_router, tags=["Currency exchange"])
+app.include_router(exchange_rates_router, tags=["Currency exchange"])
+app.include_router(currencies_convertion_router, tags=["Currency exchange"])
 
 
 @app.exception_handler(HTTPException)
