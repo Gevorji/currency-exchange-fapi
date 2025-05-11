@@ -21,7 +21,7 @@ from .utils import (
 
 logger = logging.getLogger('auth')
 
-TOKEN_URL = '/token/gain'
+TOKEN_URL = '/tokens/gain'
 
 RevocationCheckerType = Callable[[JWTModel], Awaitable[bool]]
 
