@@ -81,8 +81,7 @@ class UsersRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC):
         return User(**dto.model_dump())
 
     def process_final_model(self, model: User) -> None:
-        insp = sqlalchemy.inspect(model)
-        if insp.pending or 'password' not in insp.unmodified: # password assignment was straight, therefore has a raw value
+        if not model.has_hashed_password(): # password assignment was straight, therefore has a raw value
             model.set_password(model.password)
 
     @staticmethod

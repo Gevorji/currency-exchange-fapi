@@ -7,7 +7,8 @@ from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.types import UUID
 
 from .services.passwordvalidation import get_all_password_validators
-from .services.passwordhashing import build_password_string, match_password, get_password_hash_str
+from .services.passwordhashing import (build_password_string, match_password, get_password_hash_str,
+                                       get_password_components)
 from .services.permissions import UserCategory
 from currency_exchange.config import auth_settings, SQLAModelBase
 from currency_exchange.utils.importobject import import_object
@@ -84,6 +85,9 @@ class User(SQLAModelBase):
 
         if complains:
             raise ValueError(complains)
+
+    def has_hashed_password(self) -> bool:
+        return bool(get_password_components(self.password))
 
 
 class TokenState(SQLAModelBase):
