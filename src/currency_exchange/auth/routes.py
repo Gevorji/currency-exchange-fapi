@@ -104,7 +104,8 @@ async def create_token(
         access_token=access_token_str,
         token_type='bearer',
         refresh_token=refresh_token_str,
-        expires_in=access_token_payload['exp'] - access_token_payload['iat'],
+        access_expires_in=access_token_payload['exp'] - access_token_payload['iat'],
+        refresh_expires_in=refresh_token_payload['exp'] - refresh_token_payload['iat'],
         scope=access_token_payload['scope']
     )
 
@@ -182,7 +183,8 @@ async def refresh_access_token(
         access_token=access_token_str,
         token_type='bearer',
         refresh_token=refresh_token_str,
-        expires_in=access_token_payload['exp'] - access_token_payload['iat'],
+        access_expires_in=access_token_payload['exp'] - access_token_payload['iat'],
+        refresh_expires_in=refresh_token_payload['exp'] - refresh_token_payload['iat'],
         scope=access_token_payload['scope']
     )
 

@@ -84,15 +84,17 @@ class TokenCreatedResponse(BaseModel):
 
     access_token: str
     token_type: str
-    expires_in: timedelta | int
+    access_expires_in: timedelta | int
     refresh_token: Optional[str] = None
+    refresh_expires_in: Optional[timedelta | int]
     scope: Optional[list[str]] = None
 
-    @field_validator('expires_in', mode='after')
+    @field_validator('access_expires_in', 'refresh_expires_in', mode='after')
     @classmethod
     def ensure_seconds(cls, value):
         if isinstance(value, timedelta):
             return value.seconds
+        return value
 
 
 class TokensRevokedResponse(BaseModel):
