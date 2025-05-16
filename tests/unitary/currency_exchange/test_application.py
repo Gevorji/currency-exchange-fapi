@@ -15,13 +15,13 @@ pytestmark = pytest.mark.anyio
 
 
 @pytest.fixture(scope="module")
-async def get_exchange_rate_interaction(exchange_rates_repo) -> GetExchangeRateInteraction:
-    return GetExchangeRateInteraction(exchange_rates_repo)
+async def get_exchange_rate_interaction(exchange_rates_repo, currencies_repo) -> GetExchangeRateInteraction:
+    return GetExchangeRateInteraction(exchange_rates_repo, currencies_repo)
 
 
 @pytest.fixture(scope="module")
-async def convert_currency_interaction(exchange_rates_repo) -> ConvertCurrencyInteraction:
-    return ConvertCurrencyInteraction(exchange_rates_repo)
+async def convert_currency_interaction(exchange_rates_repo, currencies_repo) -> ConvertCurrencyInteraction:
+    return ConvertCurrencyInteraction(exchange_rates_repo, currencies_repo)
 
 
 async def test_get_exchange_rate_interaction_by_reversed_rate_successful(get_exchange_rate_interaction,
@@ -47,6 +47,15 @@ async def test_get_exchange_rate_interaction_by_common_rate_successful(get_excha
     assert res.rate.value == pytest.approx(
         exchange_rates_models[('EUR', 'USD')].value.value / exchange_rates_models[('RUB', 'USD')].value.value
     )
+
+async def test_get_exchange_rate_interaction_rate_with_one_currency_success(get_exchange_rate_interaction,
+                                                                            exchange_rates_models):
+    res = await get_exchange_rate_interaction(GetExchangeRateDto(CurrencyCode('EUR'), CurrencyCode('EUR')),
+                                              rate_fetch_strategy=ERFetchStrat.BY_STRAIGHT_RATE)
+
+    assert res.base_currency.code == 'EUR'
+    assert res.target_currency.code == 'EUR'
+    assert res.rate.value == 1
 
 
 async def test_get_exchange_rate_interaction_error_when_by_straight_rate(get_exchange_rate_interaction):
@@ -79,3 +88,15 @@ async def test_convert_currency_interaction_successful_when_cross_rate_is_needed
     assert res.target_currency.code == 'EUR'
     assert res.exchange_rate.value == pytest.approx(rate_val)
     assert res.target_currency_amount.value == amount * rate_val
+
+
+async def test_convert_currency_interaction_successful_when_same_base_and_target_currency(convert_currency_interaction,):
+    amount = 10
+    res = await convert_currency_interaction(MakeConvertionDto(CurrencyCode('RUB'),
+                                                               CurrencyCode('RUB'),
+                                                               CurrencyAmount(amount)),
+                                             rate_fetch_strategy=ERFetchStrat.BY_COMMON_CURRENCY)
+    assert res.base_currency.code == 'RUB'
+    assert res.target_currency.code == 'RUB'
+    assert res.exchange_rate.value == 1
+    assert res.target_currency_amount.value == amount * 1

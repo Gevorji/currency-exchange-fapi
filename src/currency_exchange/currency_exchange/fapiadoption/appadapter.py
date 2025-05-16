@@ -31,11 +31,11 @@ class CurrencyExchangeFastAPIAdapter:
             UpdateCurrencyInteraction: UpdateCurrencyInteraction(self._currencies_repo),
             DeleteCurrencyInteraction: DeleteCurrencyInteraction(self._currencies_repo),
             GetAllExchangeRatesInteraction: GetAllExchangeRatesInteraction(self._exchange_rates_repo),
-            GetExchangeRateInteraction: GetExchangeRateInteraction(self._exchange_rates_repo),
+            GetExchangeRateInteraction: GetExchangeRateInteraction(self._exchange_rates_repo, self._currencies_repo),
             AddExchangeRateInteraction: AddExchangeRateInteraction(self._exchange_rates_repo),
             UpdateExchangeRateInteraction: UpdateExchangeRateInteraction(self._exchange_rates_repo),
             DeleteExchangeRateInteraction: DeleteExchangeRateInteraction(self._exchange_rates_repo),
-            ConvertCurrencyInteraction: ConvertCurrencyInteraction(self._exchange_rates_repo)
+            ConvertCurrencyInteraction: ConvertCurrencyInteraction(self._exchange_rates_repo, self._currencies_repo)
         }
 
     def get_interaction(self, interaction):

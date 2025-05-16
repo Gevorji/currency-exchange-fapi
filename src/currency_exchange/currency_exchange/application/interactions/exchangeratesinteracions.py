@@ -1,10 +1,12 @@
+from unitary.currency_exchange.conftest import currencies_repo
 from ..dto import (
     MakeConvertionDto, GetExchangeRateDto, ExchangeRateDto, ConvertedCurrenciesPairDto,
-    AlterExchangeRateDto, AddExchangeRateDto, DeleteExchangeRateDto, CurrencyDto
+    AlterExchangeRateDto, AddExchangeRateDto, DeleteExchangeRateDto, CurrencyDto, GetCurrencyDto
 )
+from ...domain.entities import Currency
 
-from ...domain.types import CurrencyAmount
-from ..interfaces import ExchangeRatesRepoInterface
+from ...domain.types import CurrencyAmount, ExchangeRateValue
+from ..interfaces import ExchangeRatesRepoInterface, CurrencyRepoInterface
 from .erfetchstrategies import ExchangeRateFetchStrategy as ERFetchStrat
 from .. import errors
 from ..extdm import IdentifiedCurrenciesExchangeRate as CurrenciesExchangeRate
@@ -21,8 +23,14 @@ class GetAllExchangeRatesInteraction:
 
 async def _get_exchange_rate(
         rate_data: GetExchangeRateDto, exchange_rates_repo: ExchangeRatesRepoInterface,
+        currencies_repo: CurrencyRepoInterface,
         *, rate_fetch_strategy: ERFetchStrat
 ) -> CurrenciesExchangeRate:
+    if rate_data.base_currency == rate_data.target_currency:
+        currency = await currencies_repo.get_currency(GetCurrencyDto(rate_data.base_currency))
+        return CurrenciesExchangeRate(
+            currency, currency, ExchangeRateValue(1)
+        )
     try:
         return await exchange_rates_repo.get_rate(rate_data)
     except errors.ExchangeRateDoesntExistError:
@@ -55,14 +63,16 @@ async def _get_exchange_rate(
 
 class GetExchangeRateInteraction:
 
-    def __init__(self, exchange_rates_repo: ExchangeRatesRepoInterface):
+    def __init__(self, exchange_rates_repo: ExchangeRatesRepoInterface, currencies_repo: CurrencyRepoInterface):
         self._exchange_rates_repo = exchange_rates_repo
+        self._currencies_repo = currencies_repo
 
     async def __call__(
             self, rate_data: GetExchangeRateDto, *, rate_fetch_strategy: ERFetchStrat
     ) -> ExchangeRateDto:
         return ExchangeRateDto.from_dm(
-            await _get_exchange_rate(rate_data, self._exchange_rates_repo, rate_fetch_strategy=rate_fetch_strategy)
+            await _get_exchange_rate(rate_data, self._exchange_rates_repo,
+                                     self._currencies_repo, rate_fetch_strategy=rate_fetch_strategy)
         )
 
 
@@ -95,8 +105,9 @@ class DeleteExchangeRateInteraction:
 
 class ConvertCurrencyInteraction:
 
-    def __init__(self, exchange_rates_repo: ExchangeRatesRepoInterface):
+    def __init__(self, exchange_rates_repo: ExchangeRatesRepoInterface, currencies_repo: CurrencyRepoInterface):
         self._exchange_rates_repo = exchange_rates_repo
+        self._currencies_repo = currencies_repo
 
     async def __call__(
             self, convertion_data: MakeConvertionDto, *, rate_fetch_strategy: ERFetchStrat
@@ -104,7 +115,7 @@ class ConvertCurrencyInteraction:
         try:
             rate = await _get_exchange_rate(
                 GetExchangeRateDto(convertion_data.from_currency, convertion_data.to_currency),
-                self._exchange_rates_repo, rate_fetch_strategy=rate_fetch_strategy
+                self._exchange_rates_repo, self._currencies_repo, rate_fetch_strategy=rate_fetch_strategy
             )
         except errors.ExchangeRateDoesntExistError as e:
             raise errors.CurrenciesConvertionError(f'Can\'t convert currencies as '
