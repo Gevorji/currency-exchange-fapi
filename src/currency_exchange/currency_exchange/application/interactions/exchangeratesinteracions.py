@@ -82,6 +82,8 @@ class AddExchangeRateInteraction:
         self._exchange_rates_repo = exchange_rates_repo
 
     async def __call__(self, exchange_rate: AddExchangeRateDto) -> ExchangeRateDto:
+        if exchange_rate.base_currency == exchange_rate.target_currency:
+            raise errors.CurrencyToSameCurrencyExchangeRateError('Cant\'t add exchange rate to same currency')
         return ExchangeRateDto.from_dm(await self._exchange_rates_repo.save_rate(exchange_rate))
 
 

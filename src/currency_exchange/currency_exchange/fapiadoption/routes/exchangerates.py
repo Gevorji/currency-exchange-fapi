@@ -78,6 +78,8 @@ async def add_exchange_rate(new_exchange_rate: Annotated[AddExchangeRateSchema, 
         raise HTTPException(status_code=404, detail=e.args[0])
     except appexc.ExchangeRateAlreadyExistsError:
         raise HTTPException(status_code=409, detail='Exchange rate already exists')
+    except appexc.CurrencyToSameCurrencyExchangeRateError:
+        raise HTTPException(status_code=409, detail='Can\'t add exchange rate to same currency')
 
 
 @exchange_rates_router.patch('/exchangerate/{code_pair}', response_model=ExchangeRateOutSchema,

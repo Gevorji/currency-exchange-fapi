@@ -314,6 +314,12 @@ class TestExchangeRatesEndpoints:
                                              data={'baseCurrencyCode': 'EUR', 'targetCurrencyCode': 'USD', 'rate': 1})
         assert response.status_code == 409
 
+    async def test_add_exchange_rate_error_when_same_currency(self, access_token, request_client):
+        response = await request_client.post(self.add_exch_rate_endpoint,
+                                             headers={'Authorization': f'Bearer {access_token[0]}'},
+                                             data={'baseCurrencyCode': 'EUR', 'targetCurrencyCode': 'EUR', 'rate': 1})
+        assert response.status_code == 409
+
     @pytest.mark.parametrize(
         'data', [
             {'baseCurrencyCode': 'EUR', 'targetCurrencyCode': 'USD', 'rate': 0},
