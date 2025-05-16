@@ -9,7 +9,8 @@ from currency_exchange.currency_exchange.domain import errors
 @pytest.mark.parametrize(
     'code,name,sign', [
         ['', 'some_name', '$'], ['USD', '', '$'], ['USD', 'some_name', ''],
-        ['USDD', 'some_sign', '$'], ['US1', 'some_sign', '$'], ['US', 'some_sign', '$']
+        ['USDD', 'some_sign', '$'], ['US1', 'some_sign', '$'], ['US', 'some_sign', '$'],
+        ['ЮСД', 'some_sign', '$']
     ]
 )
 def test_currency_init_error(code, name, sign):

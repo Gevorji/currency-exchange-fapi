@@ -1,6 +1,7 @@
 from collections import UserString
 from decimal import Decimal
 from typing import Any
+from string import ascii_letters
 
 from . import errors
 
@@ -8,7 +9,7 @@ from . import errors
 class CurrencyCode(UserString):
 
     def __init__(self, code: str, *args: Any, **kwargs: Any) -> None:
-        if not code.isalpha() or len(code) != 3:
+        if not code.isalpha() or len(code) != 3 or not set(code).issubset(ascii_letters):
             raise errors.IncorrectCurrencyCodeError("Currency code must consist of 3 alphabetic characters")
         super().__init__(code.upper(), *args, **kwargs)
 
