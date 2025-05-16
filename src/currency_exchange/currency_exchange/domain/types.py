@@ -18,6 +18,8 @@ class CurrencyName(UserString):
     def __init__(self, name: str, *args: Any, **kwargs: Any) -> None:
         if len(name) == 0:
             raise errors.IncorrectCurrencyName("Currency name cannot be blank")
+        if not set(name).issubset(ascii_letters + ' '):
+            raise errors.IncorrectCurrencyName("Currency name must consist of ascii letters and optionally spaces")
         super().__init__(name, *args, **kwargs)
 
 
