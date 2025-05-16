@@ -21,7 +21,7 @@ async def currencies_models(db_connection) -> dict[str, CurrencyORMModel]:
             code='RUB', name='Russian ruble', sign='Р'
         ),
         CurrencyORMModel(
-            code='DKK', name=' 	Danish Krone', sign='D'
+            code='DKK', name='Danish Krone', sign='D'
         ),
         CurrencyORMModel(
             code='JPY', name='Yen', sign='Y'
