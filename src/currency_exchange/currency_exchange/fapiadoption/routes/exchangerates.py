@@ -101,7 +101,7 @@ async def update_exchange_rate(
             return upd_er
         except Exception:
             logger.debug('Error on trying to update exchange_rate %s by user %s',
-                         base_code, target_code, exc_info=True)
+                        f'{base_code}-{target_code}', user.username, exc_info=True)
             raise
     except appexc.CurrencyDoesNotExistError as e:
         raise HTTPException(status_code=404, detail=e.args[0])
