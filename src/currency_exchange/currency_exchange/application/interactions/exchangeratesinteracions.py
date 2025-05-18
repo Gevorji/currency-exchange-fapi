@@ -41,7 +41,9 @@ async def _get_exchange_rate(
              reversed_er = await exchange_rates_repo.get_rate(
                     GetExchangeRateDto(rate_data.target_currency, rate_data.base_currency)
                 )
-             return reversed_er.get_reversed()
+             rate = reversed_er.get_reversed()
+             rate.id = reversed_er.id
+             return rate
 
         except errors.ExchangeRateDoesntExistError:
             if ERFetchStrat.BY_COMMON_CURRENCY not in rate_fetch_strategy:
