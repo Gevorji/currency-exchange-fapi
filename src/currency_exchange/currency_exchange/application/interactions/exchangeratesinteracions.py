@@ -1,4 +1,3 @@
-from unitary.currency_exchange.conftest import currencies_repo
 from ..dto import (
     MakeConvertionDto, GetExchangeRateDto, ExchangeRateDto, ConvertedCurrenciesPairDto,
     AlterExchangeRateDto, AddExchangeRateDto, DeleteExchangeRateDto, CurrencyDto, GetCurrencyDto
