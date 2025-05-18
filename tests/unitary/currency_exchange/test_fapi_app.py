@@ -114,10 +114,10 @@ class TestCurrenciesEndpoints:
                                             follow_redirects=True)
         assert response.status_code == 400
 
-
-    async def test_get_currency_error_when_currency_code_is_invalid(self, access_token, request_client,
+    @pytest.mark.parametrize('code', ['US', 'USD EUR'])
+    async def test_get_currency_error_when_currency_code_is_invalid(self, code, access_token, request_client,
                                                                     get_currency_request_endpoint):
-        response = await request_client.get(get_currency_request_endpoint('US'),
+        response = await request_client.get(get_currency_request_endpoint(code),
                                             headers={'Authorization': f'Bearer {access_token[0]}'})
         assert response.status_code == 400
 

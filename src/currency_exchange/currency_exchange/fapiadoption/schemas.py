@@ -8,7 +8,7 @@ from currency_exchange.currency_exchange.domain.types import ExchangeRateValue
 
 user_string_converter = BeforeValidator(lambda v: v.data if isinstance(v, UserString) else v)
 exchange_rate_value_converter = BeforeValidator(lambda v: v.value if isinstance(v, ExchangeRateValue) else v)
-CurrencyCodeField = Annotated[str, Field(pattern=re.compile('[A-Z]{3}')), user_string_converter]
+CurrencyCodeField = Annotated[str, Field(pattern=re.compile('^[A-Z]{3}$')), user_string_converter]
 CurrencyNameField = Annotated[str, Field(max_length=40), user_string_converter]
 CurrencySignField = Annotated[str, Field(), user_string_converter]
 ExchangeRateValueField = Annotated[
