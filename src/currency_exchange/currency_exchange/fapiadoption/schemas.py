@@ -55,7 +55,7 @@ class UpdateExchangeRateSchema(BaseModel):
 
 
 class CurrencyConvertionDataSchema(BaseModel):
-    from_: Annotated[str, Field(pattern=re.compile('[A-Z]{3}'), validation_alias='from')]
+    from_: Annotated[str, Field(pattern=re.compile('[A-Z]{3}'))]
     to: CurrencyCodeField
     amount: Annotated[float, Field(gt=0, allow_inf_nan=False)]
 
