@@ -1,8 +1,6 @@
 from dataclasses import dataclass, field, InitVar
 from decimal import Decimal
-from email.policy import default
-from typing import Optional, Any
-from collections import UserString
+from typing import Optional
 
 from . import errors
 from .types import CurrencyCode, CurrencySign, CurrencyName, ExchangeRateValue, CurrencyAmount

@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 
 from .routes import clients_router, token_router
-from .admin import admin_router as  auth_admin_router
 
 
 auth_router = APIRouter()

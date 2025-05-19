@@ -1,16 +1,12 @@
 import asyncio
 from logging.config import fileConfig
 
-from sqlalchemy import pool
 from sqlalchemy.engine import Connection
-from sqlalchemy.ext.asyncio import async_engine_from_config, create_async_engine
+from sqlalchemy.ext.asyncio import create_async_engine
 
 from alembic import context
-import alembic_postgresql_enum
 
 from currency_exchange.db.session import url as db_url
-import currency_exchange.auth.dbmodels
-import currency_exchange.currency_exchange.infrastructure.db.dbmodels
 from currency_exchange.db.base import Base as BaseModel
 
 

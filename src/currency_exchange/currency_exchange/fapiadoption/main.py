@@ -1,4 +1,3 @@
-from alembic.util import status
 from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse

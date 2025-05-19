@@ -1,13 +1,9 @@
-import base64
 import uuid
-import datetime
 
 import pytest
-from joserfc import jwt
 
 from currency_exchange.auth.services.jwtservice import JWTIssuer
-from ...conftest import db_session
-from .utils import add_token_state_to_db, get_token_state_from_db, EncodedToken, b64_encode_credentials
+from .utils import get_token_state_from_db, b64_encode_credentials
 
 
 pytestmark = pytest.mark.anyio

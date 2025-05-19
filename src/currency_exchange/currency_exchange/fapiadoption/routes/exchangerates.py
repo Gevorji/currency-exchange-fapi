@@ -2,7 +2,6 @@ from typing import Annotated
 import logging
 
 from fastapi import APIRouter, HTTPException, status, Form, Path, Security
-from sqlalchemy.sql.functions import user
 
 from currency_exchange.auth import verify_access
 from ...application import errors as appexc

@@ -7,9 +7,9 @@ from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBasicCredentials, OAuth2PasswordRequestForm
 from fastapi.encoders import jsonable_encoder
 
-from . import get_users_repo, get_token_state_repo, errors
+from . import get_users_repo, errors
 from .schemas import (
-    UserDbIn, UserDbOut, TokenStateDbIn, UserCreationErrorResponse,
+    UserDbIn, UserDbOut, UserCreationErrorResponse,
     UserCreatedResponse, TokenCreatedResponse, TokensRevokedResponse
 )
 from .providers import (

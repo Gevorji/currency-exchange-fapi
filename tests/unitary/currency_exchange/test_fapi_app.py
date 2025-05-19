@@ -1,16 +1,11 @@
 import pytest
 
-from fastapi import FastAPI
 from sqlalchemy import select
-from sqlalchemy.testing.provision import follower_url_from_main
 
 import currency_exchange.db.session
 from currency_exchange.auth.schemas import UserDbOut
 from currency_exchange.auth.providers import jwt_revocation_checker_provider, JWTIssuerProvider
 from currency_exchange.auth.dbmodels import User, UserCategory
-from currency_exchange.currency_exchange.fapiadoption.routes.currencies import currencies_router
-from currency_exchange.currency_exchange.fapiadoption.routes.exchangerates import exchange_rates_router
-from currency_exchange.currency_exchange.fapiadoption.routes.currenciesconvertion import currencies_convertion_router
 from currency_exchange.currency_exchange.fapiadoption.appadapter import currency_exchange_app
 from currency_exchange.currency_exchange.fapiadoption.main import app as fapi_app
 from currency_exchange.currency_exchange.infrastructure.db.dbmodels import (CurrencyORMModel,

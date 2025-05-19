@@ -97,7 +97,7 @@ class UsersRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC):
     def _handle_sqlalchemy_integrity_exception(self, exc: sqlalchemy.exc.IntegrityError) -> None:
         exc_txt = str(exc.orig)
         if 'unique' in exc_txt and 'username' in exc_txt:
-            raise errors.UserAlreadyExistsError(f'User with such username already exists')
+            raise errors.UserAlreadyExistsError('User with such username already exists')
 
     _db_exception_handlers.update({sqlalchemy.exc.IntegrityError: _handle_sqlalchemy_integrity_exception})
 
@@ -145,7 +145,7 @@ class TokenStateRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC)
         async with self._session_factory() as session:
             res = await session.execute(
                 select(TokenState)
-                .where(TokenState.user_id == user_id, TokenState.device_id == device_id, TokenState.revoked == False)
+                .where(TokenState.user_id == user_id, TokenState.device_id == device_id, TokenState.revoked is False)
             )
         return [TokenStateDbOut.model_validate(t_model) for t_model in res.scalars().all()]
 
@@ -154,7 +154,7 @@ class TokenStateRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC)
             res = await session.execute(
                 select(TokenState)
                 .where(TokenState.user_id == user_id,
-                       TokenState.revoked == False)
+                       TokenState.revoked is False)
             )
         return [TokenStateDbOut.model_validate(t_model) for t_model in res.scalars().all()]
 
@@ -162,7 +162,7 @@ class TokenStateRepository(AsyncCrudMixin, ExceptionHandlerMixin, RepositoryABC)
         async with self._session_factory() as session:
             res = await session.execute(
                 select(TokenState)
-                .where(TokenState.user_id == user_id, TokenState.id.in_(jtis), TokenState.revoked == False)
+                .where(TokenState.user_id == user_id, TokenState.id.in_(jtis), TokenState.revoked is False)
             )
 
         return [TokenStateDbOut.model_validate(t_model) for t_model in res.scalars().all()]

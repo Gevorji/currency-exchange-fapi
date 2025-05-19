@@ -1,4 +1,3 @@
-from itertools import count
 
 import pytest
 from sqlalchemy import select

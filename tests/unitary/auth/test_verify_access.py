@@ -7,7 +7,6 @@ from httpx import AsyncClient
 from currency_exchange.auth.schemas import TokenStateDbIn
 from currency_exchange.auth.services.jwtservice import JWTIssuer
 from currency_exchange.auth.providers import verify_access, jwt_validator_provider, jwt_revocation_checker_provider
-from unitary.auth.utils import add_token_state_to_db
 
 pytestmark = pytest.mark.anyio
 

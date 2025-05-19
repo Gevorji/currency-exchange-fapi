@@ -1,7 +1,5 @@
 import datetime
-import uuid
 from datetime import timedelta
-import tempfile
 
 from fastapi import FastAPI
 import pytest
@@ -10,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from currency_exchange.auth import get_users_repo
 from currency_exchange.auth import get_token_state_repo
-from currency_exchange.auth.providers import jwt_validator_provider, JWTValidatorProvider, JWTIssuerProvider
+from currency_exchange.auth.providers import jwt_validator_provider, JWTIssuerProvider
 from currency_exchange.auth.routes import clients_router, token_router
 from currency_exchange.auth.admin import admin_router
 from currency_exchange.auth.services.jwtservice import JWTValidator

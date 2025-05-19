@@ -2,7 +2,6 @@ from ..dto import (
     MakeConvertionDto, GetExchangeRateDto, ExchangeRateDto, ConvertedCurrenciesPairDto,
     AlterExchangeRateDto, AddExchangeRateDto, DeleteExchangeRateDto, CurrencyDto, GetCurrencyDto
 )
-from ...domain.entities import Currency
 
 from ...domain.types import CurrencyAmount, ExchangeRateValue
 from ..interfaces import ExchangeRatesRepoInterface, CurrencyRepoInterface
@@ -121,8 +120,8 @@ class ConvertCurrencyInteraction:
                 self._exchange_rates_repo, self._currencies_repo, rate_fetch_strategy=rate_fetch_strategy
             )
         except errors.ExchangeRateDoesntExistError as e:
-            raise errors.CurrenciesConvertionError(f'Can\'t convert currencies as '
-                                                   f'no exchange rate was found') from e
+            raise errors.CurrenciesConvertionError('Can\'t convert currencies as '
+                                                   'no exchange rate was found') from e
 
         return ConvertedCurrenciesPairDto(
             CurrencyDto.from_dm(rate.base),

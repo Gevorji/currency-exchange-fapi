@@ -1,8 +1,7 @@
 from datetime import datetime, timezone
 from typing import Annotated
 
-from pydantic import BaseModel, field_validator, model_validator, BeforeValidator, PrivateAttr
-from pydantic_core import PydanticCustomError
+from pydantic import BaseModel, model_validator, BeforeValidator, PrivateAttr
 from typing_extensions import Optional
 
 from . import JWTAlgorithms

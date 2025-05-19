@@ -9,7 +9,7 @@ def min_length_validator(password: str) -> None:
 
 def no_whitespace_chars_validator(password: str) -> None:
     if set(string.whitespace).intersection(password):
-        raise ValueError(f'Whitespace characters are not allowed in password.')
+        raise ValueError('Whitespace characters are not allowed in password.')
 
 def get_all_password_validators():
     return [import_object(validator_string) for validator_string in auth_settings.PASSWORD_VALIDATORS]

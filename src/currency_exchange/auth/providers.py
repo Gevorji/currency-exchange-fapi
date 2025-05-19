@@ -11,7 +11,6 @@ from starlette.requests import Request
 from .schemas import UserDbOut
 from .services.permissions import scopes_registry, UserCategory
 from .services.jwtservice import JWTValidator, JWTModel, JWTIssuer
-from .services.passwordhashing import match_password
 from . import errors
 from currency_exchange.config import auth_settings
 from .utils import (

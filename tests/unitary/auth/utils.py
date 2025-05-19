@@ -2,7 +2,7 @@ import base64
 import uuid
 from collections import namedtuple
 
-from sqlalchemy import select, delete, func
+from sqlalchemy import select, func
 
 from currency_exchange.auth.dbmodels import TokenState, User
 

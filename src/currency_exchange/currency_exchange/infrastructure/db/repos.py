@@ -1,11 +1,11 @@
 from typing import Sequence
-from dataclasses import asdict as dataclass_asdict, dataclass
+from dataclasses import asdict as dataclass_asdict
 
-from sqlalchemy import select, insert, update, delete, Select, or_, and_
+from sqlalchemy import select, insert, update, delete, or_, and_
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 import sqlalchemy.exc
-from sqlalchemy.exc import NoResultFound, MultipleResultsFound
-from sqlalchemy.orm import aliased, selectinload
+from sqlalchemy.exc import NoResultFound
+from sqlalchemy.orm import aliased
 
 from .modelmapping import orm_currency_to_dm_currency, orm_ex_rate_to_dm_ex_rate
 from ...application.errors import ExchangeRateAlreadyExistsError
@@ -18,7 +18,6 @@ from ...application.dto import (GetCurrencyDto, GetExchangeRateDto, AddCurrencyD
                                 AlterCurrencyDto, AlterExchangeRateDto, DeleteCurrencyDto, DeleteExchangeRateDto)
 from ...application import errors
 from ...domain.entities import CurrencyCode
-from ...domain.types import ExchangeRateValue
 
 
 class CurrencyPostgresRepo(CurrencyRepoInterface):

@@ -8,7 +8,6 @@ from sqlalchemy import URL
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine, AsyncSession, AsyncConnection
 from httpx import AsyncClient, ASGITransport
 
-from currency_exchange.config import auth_settings
 from currency_exchange.config import db_conn_settings
 from currency_exchange.db.base import Base as BaseModel
 import currency_exchange.db.session

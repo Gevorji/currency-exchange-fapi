@@ -4,7 +4,7 @@ from .extdm import (
     IdentifiedCurrenciesExchangeRate as CurrenciesExchangeRate, IdentifiedCurrency as Currency
 )
 from .dto import AddCurrencyDto, AlterCurrencyDto, DeleteCurrencyDto, AddExchangeRateDto, AlterExchangeRateDto, \
-    DeleteExchangeRateDto, CurrencyDto, ExchangeRateDto, GetCurrencyDto, GetExchangeRateDto
+    DeleteExchangeRateDto, GetCurrencyDto, GetExchangeRateDto
 
 
 class CurrencyRepoInterface(Protocol):

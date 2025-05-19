@@ -1,8 +1,7 @@
 import pytest
 
 from currency_exchange.currency_exchange.application.dto import (GetCurrencyDto, AddCurrencyDto,
-                                                                 AlterCurrencyDto, DeleteCurrencyDto, ExchangeRateDto,
-                                                                 GetExchangeRateDto, AddExchangeRateDto,
+                                                                 AlterCurrencyDto, DeleteCurrencyDto, GetExchangeRateDto, AddExchangeRateDto,
                                                                  AlterExchangeRateDto, DeleteExchangeRateDto)
 from currency_exchange.currency_exchange.domain.entities import Currency
 

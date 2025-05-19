@@ -1,5 +1,4 @@
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
-from fastapi import FastAPI
 
 from currency_exchange.db.session import async_session_factory
 from ..application.dto import (GetCurrencyDto, CurrencyDto, AddCurrencyDto, AlterCurrencyDto, DeleteCurrencyDto,
