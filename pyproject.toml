@@ -38,3 +38,4 @@ build-backend = "poetry.core.masonry.api"
 
 [project.scripts]
 createadmin = "currency_exchange.auth.commands:create_admin"
+clearexptokens = "currency_exchange.auth.commands:remove_expired_tokens"
