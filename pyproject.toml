@@ -1,6 +1,6 @@
 [project]
 name = "currency-exchange-fapi"
-version = "1.0.0"
+version = "1.0.1"
 description = ""
 authors = [
     {name = "Gevorji",email = "techno9882@gmail.com"}
