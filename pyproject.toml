@@ -39,6 +39,7 @@ build-backend = "poetry.core.masonry.api"
 [project.scripts]
 createadmin = "currency_exchange.auth.commands:create_admin"
 clearexptokens = "currency_exchange.auth.commands:remove_expired_tokens"
+generatecryptkeys = "currency_exchange.auth.commands:generate_crypto_keys"
 
 [tool.ruff.format]
 indent-style = "tab"
