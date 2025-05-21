@@ -1,0 +1,33 @@
+FROM python:3.12-alpine
+
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /home/currencyexchangesrv
+
+#RUN apk update && \
+#    apk add --virtual build-deps gcc python3-dev musl-dev && \
+#    apk add postgresql-dev && \
+#    apk del build-deps
+
+RUN --mount=type=cache,target=/root/.cache/pip  \
+    --mount=type=bind,target=.,source=. \
+    pip install .
+
+ENV HOME=/home/currencyexchangesrv
+ENV APP_HOME=/home/currencyexchangesrv/currency_exchange
+
+RUN addgroup --system currencyexchangesrv && adduser --system currencyexchangesrv currencyexchangesrv
+
+COPY src/currency_exchange ./currency_exchange/
+COPY alembic ./alembic/
+COPY alembic.ini .
+
+RUN chown -R currencyexchangesrv:currencyexchangesrv $HOME
+
+USER currencyexchangesrv
+
+ENTRYPOINT ["uvicorn", "currency_exchange.main:app"]
+
+CMD ["--host", "0.0.0.0", "--port", "8000"]

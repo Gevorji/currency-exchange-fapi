@@ -1,0 +1,11 @@
+services:
+  curexch_tg_bot:
+    build:
+      context: '${CUREXCH_TG_BOT_DIR_PTH}'
+      dockerfile: '${CUREXCH_TG_BOT_DIR_PTH}/docker/Dockerfile.currencyexchangetgbot'
+    env_file:
+      - ../.tgbot.env
+    depends_on:
+      - currency_exchange_service
+    volumes:
+      - ../admin_records:/home/tgbot/admin_records

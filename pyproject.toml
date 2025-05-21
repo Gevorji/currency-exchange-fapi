@@ -1,0 +1,45 @@
+[project]
+name = "currency-exchange-fapi"
+version = "1.0.0"
+description = ""
+authors = [
+    {name = "Gevorji",email = "techno9882@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12,<4.0"
+dependencies = [
+    "sqlalchemy[asyncio] (>=2.0.39,<3.0.0)",
+    "alembic (>=1.15.1,<2.0.0)",
+    "fastapi[standard] (>=0.115.12,<0.116.0)",
+    "python-dotenv (>=1.0.1,<2.0.0)",
+    "joserfc (>=1.0.4,<2.0.0)",
+    "pydantic-settings (>=2.8.1,<3.0.0)",
+    "bcrypt (>=4.3.0,<5.0.0)",
+    "asyncpg (==0.30.0)",
+    "python-multipart (>=0.0.20,<0.0.21)",
+    "alembic-postgresql-enum (>=1.7.0,<2.0.0)",
+]
+
+[tool.poetry]
+packages = [{include = "currency_exchange", from = "src"}]
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.3.5"
+httpx = "^0.28.1"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.11.8"
+mypy = "^1.15.0"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[project.scripts]
+createadmin = "currency_exchange.auth.commands:create_admin"
+clearexptokens = "currency_exchange.auth.commands:remove_expired_tokens"
+generatecryptkeys = "currency_exchange.auth.commands:generate_crypto_keys"
+
+[tool.ruff.format]
+indent-style = "tab"

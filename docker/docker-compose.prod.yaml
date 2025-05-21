@@ -1,0 +1,33 @@
+services:
+  currency_exchange_service:
+    build:
+      context: ../
+      dockerfile: ./Dockerfile.currencyexchange
+    ports:
+      - '${CUREXCH_SERVER_ADDR_BIND:-127.0.0.1:8000}:8000'
+    env_file:
+      - ../.env
+    depends_on:
+      db:
+        condition: service_healthy
+    secrets:
+      - jwt_secret
+      - jwt_secret.pub
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - currency_exch_fapi_postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ../.env
+    healthcheck:
+      test: nc -z $$DB_HOST $$DB_PORT || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 3
+volumes:
+  currency_exch_fapi_postgres_data:
+secrets:
+  jwt_secret:
+    file: ../jwt_secret
+  jwt_secret.pub:
+    file: ../jwt_secret.pub
